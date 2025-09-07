@@ -1,4 +1,3 @@
-
 CREATE TABLE [sex_types] (
   [id] tinyint PRIMARY KEY IDENTITY(1, 1),
   [cod] char(1) NOT NULL,
