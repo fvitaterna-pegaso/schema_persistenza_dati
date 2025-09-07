@@ -1,0 +1,312 @@
+//Dimensioni
+/*
+table ums{
+  id smallint
+  um_code varchar(5) [not null, unique]
+  um_name varchar(25) [not null]
+}
+*/
+
+table sex_types{
+  id tinyint [primary key, increment]
+  cod char(1) [not null]
+  sex_type_name varchar(100) [not null]
+}
+
+Table continents{
+  id tinyint [primary key, increment]
+  cod char(2) [not null, unique]
+  continent_name varchar(16) [not null]
+}
+
+Table countries{
+  id tinyint [primary key, increment]
+  cod char(3) [not null, unique] //ISO 3166-1 alpha-3
+  continent_id tinyint [not null]
+  country_name varchar(25) [not null, unique]
+}
+
+Table cities{
+  id smallint [primary key, increment]
+  country_id tinyint
+  area_local_code varchar(5) [null] //In Italia può coincidere con la provincia
+  city_name varchar(25) [not null, unique]
+}
+
+Table airports{
+  id smallint [primary key, increment]
+  iata_airport_code char(3) [not null, unique]
+  city_id smallint [not null]
+  airport_name varchar(50) [unique]
+  airport_address varchar(255)
+}
+
+Table price_components{
+  id tinyint [primary key, increment]
+  price_component_code varchar(3) [not null, unique]
+  price_component_name varchar(50) [not null]
+  price_component_regex varchar(1025) [null]
+}
+
+Table airlines{
+  id smallint [primary key, increment]
+  iata_airline_code char(2) [not null, unique]
+  icao_airline_code char(3) [not null, unique]
+  airline_name varchar(50) [not null]
+  id_country tinyint [not null]
+}
+
+
+Table flights{
+  id smallint [primary key,increment]
+  id_airline smallint [not null]
+  iata_flight_code varchar(6) [not null, unique]
+}
+
+
+table reservation_systems{
+  id tinyint [primary key, increment]
+  reservation_system_code varchar(3) [not null, unique]
+  reservation_system_name varchar(25) [not null]
+}
+
+table fare_types{
+  id int [primary key, increment]
+  fare_code varchar(5) [not null, unique]
+  fare_name varchar(25) [not null]
+}
+
+
+table fare_type_options{
+  id smallint [primary key]
+  option_code varchar(15) [not null, unique]
+}
+
+table fare_type_details{
+  id_fare_type int [not null]
+  id_fare_type_option smallint [not null]
+
+  indexes {
+    (id_fare_type,id_fare_type_option) [pk]
+  }
+}
+
+table telephone_type{
+  id tinyint [primary key, increment]
+  cod varchar(5) [not null, unique]
+  type_name varchar(50) [not null]
+}
+
+table identity_document_types{
+  id tinyint [primary key, increment]
+  cod char(2) [not null]
+  type_name varchar(25) [not null]
+}
+
+table airplanes{
+  id int [primary key, increment]
+  id_flight smallint [not null]
+  model varchar(50) [not null]
+}
+
+table payment_methods{
+  id tinyint [primary key, increment]
+  cod varchar (10) [not null]
+  method_name varchar(50) [not null]
+}
+
+/*
+table price_component_type{
+  id smallint [primary key,increment]
+  cod varchar(10) [not null]
+  price_component_name varchar(50) [not null]
+}
+*/
+
+//Gestione Utente
+
+Table users{
+  user_id uniqueidentifier [primary key, default: `NEWID()`]
+  user_name varchar(255) [not null, unique]
+  password varchar(2048) [not null]
+  first_name varchar(100) [not null]
+  last_name varchar(100) [not null]
+  birth_date datetime [not null]
+  id_sex_type tinyint [not null]
+  email varchar(100) [not null]
+  id_telephone bigint [not null]
+  address varchar(1000) [not null]
+  zip_code varchar(10) [null]
+  id_city smallint [not null]
+  frequent_flyer_code varchar(15) [null]
+  frequent_flyer_exp_date datetime [null]
+  freuqent_flyer_point_balance int [null]
+}
+
+
+//Gestione Prenotazioni-Acquisti
+
+table airplane_seats{
+  id bigint [primary key, increment]
+  id_airplane int [not null]
+  seat varchar(4)
+}
+
+
+Table flight_schedules{
+  id bigint [primary key, increment]
+  id_flight smallint [not null]
+  id_airplane int [not null]
+  departure_date date [not null]
+  departure_time time [not null]
+  arrival_date date [not null]
+  arrival_time date [not null]
+
+  indexes {
+    (id_flight, departure_date) [unique]
+  }
+}
+
+
+Table reservations{ //da completare
+  id bigint [primary key]
+  pnr_code varchar(6) [not null]
+  id_reservation_system tinyint [not null]
+  /*owner_user_id uniqueidentifier [null]
+  owner_first_name varchar(100) [not null]
+  owner_last_name varchar(100) [not null]
+  owner_email varchar(100) [not null]*/
+  id_origin_airport smallint [not null]
+  id_destination_airport smallint [not null]
+  departure_date datetime [not null]
+  return_date datetime [null] //potrebbe essere un viaggio di sola andata
+  id_fare_type int [not null]
+  /*Impostato a null per permettere flessibilità front end
+  A prenotazione chiusa se null va valorizzato con automazione*/
+  total_price money [null]
+  discount money [null]
+  id_payment_method tinyint [null]  //dipende da ciclo di vita
+  owner_conditions_acceptance bit [not null]
+  id_reservations_status tinyint [not null]
+
+  indexes {
+    (id_reservation_system,pnr_code) [unique]
+  }
+}
+
+
+//Tabella many to many per tappe viaggio
+table journeys{
+  //spiegare l'eccezione di mettere una chiave muta per comodità di navigazione
+  id_journey bigint [primary key, increment] 
+  id_reservation bigint [not null]
+  id_flight_schedule bigint [not null]
+  flight_segment_number tinyint [not null]
+
+}
+
+/*
+1. Anche se il passeggero ha un'utenza, non c'+è ridondanza per i dati personali v
+2. Alcuni campi nullable diventano obbligatori e quindi da controllare applicativamente seil paseggeto è
+  l'owner della prenotazione
+3. Alcuni camopi (tipo i documenti) sono lasciatu null perchè la loro obbligatorietà dipende 
+dal ciclo di vita della prenotazione
+*/
+table passengers{
+  id bigint [primary key, unique]
+  id_reservation bigint [not null]
+  reservation_owner bit [not null]
+  user_id uniqueidentifier [null]
+  ticket_number varchar(13) [null]
+  first_name varchar(100) [not null]
+  last_name varchar(100) [not null]
+  birth_date date [not null]
+  email varchar(100) [null]
+  id_doc_type tinyint [not null]
+  id_doc_number varchar(50) [not null]
+  id_doc_expiration_date date [not null]
+}
+
+table reservation_component_prices{
+  id_passenger bigint [not null]
+  id_price_conponent tinyint [not null]
+  price money [not null]
+
+  indexes {
+    (id_passenger, id_price_conponent) [pk]
+  }
+    
+}
+
+table flight_schedule_seats{
+  id_journey bigint [not null]
+  id_passenger bigint [not null]
+  id_seat bigint [not null]
+  id_fare_type int [not null]
+
+  indexes {
+    (id_journey, id_passenger, id_seat) [pk]
+  }
+}
+
+
+table reservations_telephones{
+  id_reservation bigint [not null]
+  id_telephone bigint [not null]
+
+  indexes {
+    (id_reservation, id_telephone) [pk]
+  }
+}
+
+table reservations_statuses{
+  id tinyint [primary key, increment]
+  cod varchar(7) [not null, unique]
+  status_name varchar(15) [not null]
+  status_description varchar(100) [null]
+}
+
+table telephones{
+  id bigint [primary key, increment]
+  id_telephone_type tinyint [not null]
+  telephone_country_code varchar(4) [not null]
+  telephone_area_code varchar(5) [not null]
+  telephone_number varchar(10) [not null]
+}
+
+
+
+//Relazioni
+Ref continent_to_countries: countries.continent_id > continents.id
+Ref country_to_cities: cities.country_id > countries.id
+Ref city_to_airports: airports.city_id > cities.id
+Ref country_to_airline: airlines.id_country > countries.id
+Ref reservation_to_system_reservations: reservations.id_reservation_system > reservation_systems.id
+Ref origin_airport_to_reservations: reservations.id_origin_airport > airports.id
+Ref origin_destination_to_reservations: reservations.id_destination_airport > airports.id
+Ref fare_type_to_reservations: reservations.id_fare_type > fare_types.id
+Ref fare_type_to_details: fare_type_details.id_fare_type > fare_types.id
+Ref fare_type_options_to_details: fare_type_details.id_fare_type_option > fare_type_options.id
+Ref telephone_type_to_telephones: telephones.id_telephone_type > telephone_type.id
+Ref reservation_to_reservations_telephones: reservations_telephones.id_reservation > reservations.id
+Ref telephone_to_reservations_telephones: reservations_telephones.id_telephone > telephones.id
+Ref reservation_to_status_reservations: reservations.id_reservations_status > reservations_statuses.id
+Ref airline_to_flights: flights.id_airline > airlines.id
+Ref flight_to_flight_schedules: flight_schedules.id_flight > flights.id
+Ref airplanes_to_flight_schedules: flight_schedules.id_airplane > airplanes.id
+Ref airplanes_to_airplans_seats: airplane_seats.id_airplane > airplanes.id
+Ref journey_to_flight_schedule_seat: flight_schedule_seats.id_journey > journeys.id_journey
+Ref passenger_to_flight_schedule_seats: flight_schedule_seats.id_passenger > passengers.id
+Ref seat_to_flight_schedule_seats: flight_schedule_seats.id_seat > airplane_seats.id
+Ref reservation_to_reservation_passengers: passengers.id_reservation > reservations.id
+//Ref user_to_reservations: reservations.owner_user_id > users.user_id
+Ref user_to_reservation_passengers: passengers.user_id > users.user_id
+Ref identity_document_type_to_reservation_passengers: passengers.id_doc_type > identity_document_types.id
+Ref reservation_to_journeys: journeys.id_reservation > reservations.id
+Ref flight_schedule_to_journeys: journeys.id_flight_schedule > flight_schedules.id
+Ref passenger_to_reservation_component_price: reservation_component_prices.id_passenger > passengers.id
+Ref price_component_to_reservation_component_price: reservation_component_prices.id_price_conponent > price_components.id
+Ref payment_method_to_reservations: reservations.id_payment_method > payment_methods.id
+Ref sex_type_to_users: users.id_sex_type > sex_types.id
+Ref telephone_to_users: users.id_telephone > telephones.id
+Ref city_to_users: users.id_city > cities.id
