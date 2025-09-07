@@ -131,7 +131,7 @@ Table users{
   password varchar(2048) [not null]
   first_name varchar(100) [not null]
   last_name varchar(100) [not null]
-  birth_date datetime [not null]
+  birth_date date [not null]
   id_sex_type tinyint [not null]
   email varchar(100) [not null]
   id_telephone bigint [not null]
@@ -139,7 +139,7 @@ Table users{
   zip_code varchar(10) [null]
   id_city smallint [not null]
   frequent_flyer_code varchar(15) [null]
-  frequent_flyer_exp_date datetime [null]
+  frequent_flyer_exp_date date [null]
   freuqent_flyer_point_balance int [null]
 }
 
@@ -160,7 +160,7 @@ Table flight_schedules{
   departure_date date [not null]
   departure_time time [not null]
   arrival_date date [not null]
-  arrival_time date [not null]
+  arrival_time time [not null]
 
   indexes {
     (id_flight, departure_date) [unique]
@@ -178,8 +178,8 @@ Table reservations{ //da completare
   owner_email varchar(100) [not null]*/
   id_origin_airport smallint [not null]
   id_destination_airport smallint [not null]
-  departure_date datetime [not null]
-  return_date datetime [null] //potrebbe essere un viaggio di sola andata
+  departure_date date [not null]
+  return_date date [null] //potrebbe essere un viaggio di sola andata
   id_fare_type int [not null]
   /*Impostato a null per permettere flessibilità front end
   A prenotazione chiusa se null va valorizzato con automazione*/
@@ -213,7 +213,7 @@ table journeys{
 dal ciclo di vita della prenotazione
 */
 table passengers{
-  id bigint [primary key, unique]
+  id bigint [primary key, increment]
   id_reservation bigint [not null]
   reservation_owner bit [not null]
   user_id uniqueidentifier [null]

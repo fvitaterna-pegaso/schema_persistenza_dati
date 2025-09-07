@@ -1,3 +1,8 @@
+use db_abdf0e_fvitapegaso
+
+go
+
+
 CREATE TABLE [sex_types] (
   [id] tinyint PRIMARY KEY IDENTITY(1, 1),
   [cod] char(1) NOT NULL,
@@ -122,7 +127,7 @@ CREATE TABLE [users] (
   [password] varchar(2048) NOT NULL,
   [first_name] varchar(100) NOT NULL,
   [last_name] varchar(100) NOT NULL,
-  [birth_date] datetime NOT NULL,
+  [birth_date] date NOT NULL,
   [id_sex_type] tinyint NOT NULL,
   [email] varchar(100) NOT NULL,
   [id_telephone] bigint NOT NULL,
@@ -130,7 +135,7 @@ CREATE TABLE [users] (
   [zip_code] varchar(10),
   [id_city] smallint NOT NULL,
   [frequent_flyer_code] varchar(15),
-  [frequent_flyer_exp_date] datetime,
+  [frequent_flyer_exp_date] date,
   [freuqent_flyer_point_balance] int
 )
 GO
@@ -149,7 +154,7 @@ CREATE TABLE [flight_schedules] (
   [departure_date] date NOT NULL,
   [departure_time] time NOT NULL,
   [arrival_date] date NOT NULL,
-  [arrival_time] date NOT NULL
+  [arrival_time] time NOT NULL
 )
 GO
 
@@ -159,8 +164,8 @@ CREATE TABLE [reservations] (
   [id_reservation_system] tinyint NOT NULL,
   [id_origin_airport] smallint NOT NULL,
   [id_destination_airport] smallint NOT NULL,
-  [departure_date] datetime NOT NULL,
-  [return_date] datetime,
+  [departure_date] date NOT NULL,
+  [return_date] date,
   [id_fare_type] int NOT NULL,
   [total_price] money,
   [discount] money,
@@ -179,7 +184,7 @@ CREATE TABLE [journeys] (
 GO
 
 CREATE TABLE [passengers] (
-  [id] bigint UNIQUE PRIMARY KEY,
+  [id] bigint PRIMARY KEY IDENTiTY(1, 1),
   [id_reservation] bigint NOT NULL,
   [reservation_owner] bit NOT NULL,
   [user_id] uniqueidentifier,
