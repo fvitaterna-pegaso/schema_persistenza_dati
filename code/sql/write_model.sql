@@ -1,3 +1,10 @@
+/**********
+Nome Script		write_model.sql
+Autore			Fabio Vitaterna
+Descrizione		Creazione del modello di persistanza da zero
+Note			Se il modello già esiste, prima di ricrearlo, lo script lo elimina completamente (dati inclusi)
+**********/
+
 use db_abdf0e_fvitapegaso
 
 go
