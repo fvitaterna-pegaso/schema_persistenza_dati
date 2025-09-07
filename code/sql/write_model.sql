@@ -2,6 +2,370 @@ use db_abdf0e_fvitapegaso
 
 go
 
+/**********CHECK ESISTENZA FK********************/
+
+if exists(select name from sys.foreign_keys where name = 'continent_to_countries')
+		and exists(select * from sys.tables where name = 'countries')
+	alter table countries drop constraint continent_to_countries 
+
+
+GO
+
+
+if exists(select name from sys.foreign_keys where name = 'country_to_cities')
+		and exists(select * from sys.tables where name = 'cities')
+	alter table cities drop constraint country_to_cities 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'city_to_airports')
+		and exists(select * from sys.tables where name = 'airports')
+	alter table airports drop constraint city_to_airports 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'country_to_airline')
+		and exists(select * from sys.tables where name = 'airlines')
+	alter table [airlines] drop constraint [country_to_airline] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'reservation_to_system_reservations')
+		and exists(select * from sys.tables where name = 'reservations')
+	alter table [reservations] drop constraint [reservation_to_system_reservations] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'origin_airport_to_reservations')
+		and exists(select * from sys.tables where name = 'reservations')
+	alter table [reservations] drop constraint [origin_airport_to_reservations] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'origin_destination_to_reservations')
+		and exists(select * from sys.tables where name = 'reservations')
+	alter table [reservations] drop constraint [origin_destination_to_reservations] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'fare_type_to_reservations')
+		and exists(select * from sys.tables where name = 'reservations')
+	alter table [reservations] drop constraint [fare_type_to_reservations] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'fare_type_to_details')
+		and exists(select * from sys.tables where name = 'fare_type_details')
+	alter table [fare_type_details] drop constraint [fare_type_to_details] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'fare_type_options_to_details')
+		and exists(select * from sys.tables where name = 'fare_type_details')
+	alter table [fare_type_details] drop constraint [fare_type_options_to_details] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'telephone_type_to_telephones')
+		and exists(select * from sys.tables where name = 'telephones')
+	alter table [telephones] drop constraint [telephone_type_to_telephones] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'reservation_to_reservations_telephones')
+		and exists(select * from sys.tables where name = 'reservations_telephones')
+	alter table [reservations_telephones] drop constraint [reservation_to_reservations_telephones] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'telephone_to_reservations_telephones')
+		and exists(select * from sys.tables where name = 'reservations_telephones')
+	alter table [reservations_telephones] drop constraint [telephone_to_reservations_telephones] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'reservation_to_status_reservations')
+		and exists(select * from sys.tables where name = 'reservations')
+	alter table [reservations] drop constraint [reservation_to_status_reservations] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'airline_to_flights')
+		and exists(select * from sys.tables where name = 'flights')
+	alter table [flights] drop constraint [airline_to_flights] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'flight_to_flight_schedules')
+		and exists(select * from sys.tables where name = 'flight_schedules')
+	alter table [flight_schedules] drop constraint [flight_to_flight_schedules] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'airplanes_to_flight_schedules')
+		and exists(select * from sys.tables where name = 'flight_schedules')
+	alter table [flight_schedules] drop constraint [airplanes_to_flight_schedules] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'airplanes_to_airplans_seats')
+		and exists(select * from sys.tables where name = 'airplane_seats')
+	alter table [airplane_seats] drop constraint [airplanes_to_airplans_seats] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'journey_to_flight_schedule_seat')
+		and exists(select * from sys.tables where name = 'flight_schedule_seats')
+	alter table [flight_schedule_seats] drop constraint [journey_to_flight_schedule_seat] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'passenger_to_flight_schedule_seats')
+		and exists(select * from sys.tables where name = 'flight_schedule_seats')
+	alter table [flight_schedule_seats] drop constraint [passenger_to_flight_schedule_seats] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'seat_to_flight_schedule_seats')
+		and exists(select * from sys.tables where name = 'flight_schedule_seats')
+	alter table [flight_schedule_seats] drop constraint [seat_to_flight_schedule_seats] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'reservation_to_reservation_passengers')
+		and exists(select * from sys.tables where name = 'passengers')
+	alter table [passengers] drop constraint [reservation_to_reservation_passengers] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'user_to_reservation_passengers')
+		and exists(select * from sys.tables where name = 'passengers')
+	alter table [passengers] drop constraint [user_to_reservation_passengers] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'identity_document_type_to_reservation_passengers')
+		and exists(select * from sys.tables where name = 'passengers')
+	alter table [passengers] drop constraint [identity_document_type_to_reservation_passengers] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'reservation_to_journeys')
+		and exists(select * from sys.tables where name = 'journeys')
+	alter table [journeys] drop constraint [reservation_to_journeys] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'flight_schedule_to_journeys')
+		and exists(select * from sys.tables where name = 'journeys')
+	alter table [journeys] drop constraint [flight_schedule_to_journeys] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'passenger_to_reservation_component_price')
+		and exists(select * from sys.tables where name = 'reservation_component_prices')
+	alter table [reservation_component_prices] drop constraint [passenger_to_reservation_component_price] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'price_component_to_reservation_component_price')
+		and exists(select * from sys.tables where name = 'reservation_component_prices')
+	alter table [reservation_component_prices] drop constraint [price_component_to_reservation_component_price] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'payment_method_to_reservations')
+		and exists(select * from sys.tables where name = 'reservations')
+	alter table [reservations] drop constraint [payment_method_to_reservations] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'sex_type_to_users')
+		and exists(select * from sys.tables where name = 'users')
+	alter table [users] drop constraint [sex_type_to_users] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'telephone_to_users')
+		and exists(select * from sys.tables where name = 'users')
+	alter table [users] drop constraint [telephone_to_users] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'city_to_users')
+		and exists(select * from sys.tables where name = 'users')
+	alter table [users] drop constraint [city_to_users] 
+
+GO
+
+
+GO
+/**********CHECK ESISTENZA TABELLE********************/
+
+/****** Object:  Table [dbo].[airlines]    Script Date: 07/09/2025 17:42:22 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[airlines]') AND type in (N'U'))
+DROP TABLE [dbo].[airlines]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[airplane_seats]    Script Date: 07/09/2025 17:42:23 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[airplane_seats]') AND type in (N'U'))
+DROP TABLE [dbo].[airplane_seats]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[airplanes]    Script Date: 07/09/2025 17:42:23 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[airplanes]') AND type in (N'U'))
+DROP TABLE [dbo].[airplanes]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[airports]    Script Date: 07/09/2025 17:42:23 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[airports]') AND type in (N'U'))
+DROP TABLE [dbo].[airports]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[cities]    Script Date: 07/09/2025 17:42:24 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[cities]') AND type in (N'U'))
+DROP TABLE [dbo].[cities]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[continents]    Script Date: 07/09/2025 17:42:24 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[continents]') AND type in (N'U'))
+DROP TABLE [dbo].[continents]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[countries]    Script Date: 07/09/2025 17:42:24 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[countries]') AND type in (N'U'))
+DROP TABLE [dbo].[countries]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[fare_type_details]    Script Date: 07/09/2025 17:42:24 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fare_type_details]') AND type in (N'U'))
+DROP TABLE [dbo].[fare_type_details]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[fare_type_options]    Script Date: 07/09/2025 17:42:25 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fare_type_options]') AND type in (N'U'))
+DROP TABLE [dbo].[fare_type_options]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[fare_types]    Script Date: 07/09/2025 17:42:25 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fare_types]') AND type in (N'U'))
+DROP TABLE [dbo].[fare_types]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[flight_schedule_seats]    Script Date: 07/09/2025 17:42:25 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[flight_schedule_seats]') AND type in (N'U'))
+DROP TABLE [dbo].[flight_schedule_seats]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[flight_schedules]    Script Date: 07/09/2025 17:42:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[flight_schedules]') AND type in (N'U'))
+DROP TABLE [dbo].[flight_schedules]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[flights]    Script Date: 07/09/2025 17:42:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[flights]') AND type in (N'U'))
+DROP TABLE [dbo].[flights]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[identity_document_types]    Script Date: 07/09/2025 17:42:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[identity_document_types]') AND type in (N'U'))
+DROP TABLE [dbo].[identity_document_types]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[journeys]    Script Date: 07/09/2025 17:42:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[journeys]') AND type in (N'U'))
+DROP TABLE [dbo].[journeys]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[passengers]    Script Date: 07/09/2025 17:42:27 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[passengers]') AND type in (N'U'))
+DROP TABLE [dbo].[passengers]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[payment_methods]    Script Date: 07/09/2025 17:42:27 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[payment_methods]') AND type in (N'U'))
+DROP TABLE [dbo].[payment_methods]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[price_components]    Script Date: 07/09/2025 17:42:27 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[price_components]') AND type in (N'U'))
+DROP TABLE [dbo].[price_components]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[reservation_component_prices]    Script Date: 07/09/2025 17:42:27 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[reservation_component_prices]') AND type in (N'U'))
+DROP TABLE [dbo].[reservation_component_prices]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[reservation_systems]    Script Date: 07/09/2025 17:42:27 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[reservation_systems]') AND type in (N'U'))
+DROP TABLE [dbo].[reservation_systems]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[reservations]    Script Date: 07/09/2025 17:42:28 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[reservations]') AND type in (N'U'))
+DROP TABLE [dbo].[reservations]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[reservations_statuses]    Script Date: 07/09/2025 17:42:28 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[reservations_statuses]') AND type in (N'U'))
+DROP TABLE [dbo].[reservations_statuses]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[reservations_telephones]    Script Date: 07/09/2025 17:42:28 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[reservations_telephones]') AND type in (N'U'))
+DROP TABLE [dbo].[reservations_telephones]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[sex_types]    Script Date: 07/09/2025 17:42:29 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[sex_types]') AND type in (N'U'))
+DROP TABLE [dbo].[sex_types]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[telephone_type]    Script Date: 07/09/2025 17:42:29 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[telephone_type]') AND type in (N'U'))
+DROP TABLE [dbo].[telephone_type]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[telephones]    Script Date: 07/09/2025 17:42:29 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[telephones]') AND type in (N'U'))
+DROP TABLE [dbo].[telephones]
+GO
+USE [db_abdf0e_fvitapegaso]
+GO
+/****** Object:  Table [dbo].[users]    Script Date: 07/09/2025 17:42:29 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[users]') AND type in (N'U'))
+DROP TABLE [dbo].[users]
+GO
+
+
+
+/**********CREAZIONE TABELLE********************/
 
 CREATE TABLE [sex_types] (
   [id] tinyint PRIMARY KEY IDENTITY(1, 1),
@@ -239,6 +603,9 @@ CREATE TABLE [telephones] (
   [telephone_number] varchar(10) NOT NULL
 )
 GO
+
+/**********CREAZIONE ESISTENZA KEYS, CONSTRAINT, ETC********************/
+
 
 CREATE UNIQUE INDEX [flight_schedules_index_0] ON [flight_schedules] ("id_flight", "departure_date")
 GO
