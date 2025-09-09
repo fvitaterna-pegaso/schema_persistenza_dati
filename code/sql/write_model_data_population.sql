@@ -23,7 +23,7 @@ go
 
 GO
 
---2, Tabella continents
+--2. Tabella continents
 --insert into continents (cod, continent_name) values ('AF', 'Africa');
 --insert into continents (cod, continent_name) values ('AS', 'Asia');
 --insert into continents (cod, continent_name) values ('EU', 'Europa');
@@ -34,3 +34,12 @@ GO
 --select * from continents
 
 GO
+
+
+--3. Tabella Countries
+--insert into countries (cod, continent_id, country_name) VALUES ('ITA',3,'Italy');
+--insert into countries (cod, continent_id, country_name) VALUES ('FRA',3,'France');
+--insert into countries (cod, continent_id, country_name) VALUES ('USA',4,'United States');
+--insert into countries (cod, continent_id, country_name) VALUES ('PAN',4,'Panama');
+
+--select * from countries;
