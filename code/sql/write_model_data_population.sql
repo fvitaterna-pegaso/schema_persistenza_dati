@@ -9,8 +9,9 @@ use db_abdf0e_fvitapegaso
 
 go
 
-----dichiarazione variabili
---declare @continent_id tinyint;
+--dichiarazione variabili
+declare @continent_id tinyint;
+declare @country_id tinyint;
 
 ----1. Tabella sex_types
 --insert into sex_types (cod,sex_type_name)
@@ -51,3 +52,22 @@ go
 --from countries n
 --inner join continents c on n.continent_id = c.id
 
+----4. Tabella cities
+--select * from countries
+
+--select @country_id = id from countries where cod = 'ITA';
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'RM', 'Rome');
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'MI', 'Milan');
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'TS', 'Trieste');
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'PA', 'Palermo');
+
+--select @country_id = id from countries where cod = 'USA';
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'RM', 'Miami');
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'MI', 'Boston');
+
+--select @country_id = id from countries where cod = 'FRA';
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'RM', 'Paris');
+
+--select ci.*, co.country_name
+--from cities ci
+--inner join countries co on ci.country_id = co.id;
