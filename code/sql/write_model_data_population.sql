@@ -9,7 +9,10 @@ use db_abdf0e_fvitapegaso
 
 go
 
---1. Tabella sex_types
+----dichiarazione variabili
+--declare @continent_id tinyint;
+
+----1. Tabella sex_types
 --insert into sex_types (cod,sex_type_name)
 --	values('F', 'Sesso Femminile');
 
@@ -21,9 +24,8 @@ go
 
 --select * from sex_types;
 
-GO
 
---2. Tabella continents
+----2. Tabella continents
 --insert into continents (cod, continent_name) values ('AF', 'Africa');
 --insert into continents (cod, continent_name) values ('AS', 'Asia');
 --insert into continents (cod, continent_name) values ('EU', 'Europa');
@@ -33,13 +35,19 @@ GO
 
 --select * from continents
 
-GO
 
+----3. Tabella Countries
+--select @continent_id = id from continents where cod = 'EU';
+--insert into countries (cod, continent_id, country_name) VALUES ('ITA',@continent_id,'Italy');
+--insert into countries (cod, continent_id, country_name) VALUES ('FRA',@continent_id,'France');
 
---3. Tabella Countries
---insert into countries (cod, continent_id, country_name) VALUES ('ITA',3,'Italy');
---insert into countries (cod, continent_id, country_name) VALUES ('FRA',3,'France');
+--select @continent_id = id from continents where cod = 'NA';
 --insert into countries (cod, continent_id, country_name) VALUES ('USA',4,'United States');
 --insert into countries (cod, continent_id, country_name) VALUES ('PAN',4,'Panama');
 
+
 --select * from countries;
+--select n.*, c.continent_name
+--from countries n
+--inner join continents c on n.continent_id = c.id
+
