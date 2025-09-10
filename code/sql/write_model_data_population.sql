@@ -129,3 +129,21 @@ declare @country_id tinyint;
 --from airports a 
 --inner join cities c on a.city_id = c.id;
 
+----6. Tabella airlines
+
+----ITA Airways
+--insert into airlines (iata_airline_code, icao_airline_code,airline_name, id_country)
+--select 'AZ', 'ITY', 'ITA Airways', id
+--from countries
+--where cod = 'ITA';
+
+----Air France
+--insert into airlines (iata_airline_code, icao_airline_code,airline_name, id_country)
+--select 'AF', 'AFR', 'Air France', id
+--from countries
+--where cod = 'FRA';
+
+
+--select a.*, c.country_name
+--from airlines a 
+--inner join countries c on a.id_country = c.id;
