@@ -392,7 +392,7 @@ CREATE TABLE [countries] (
   [id] tinyint PRIMARY KEY IDENTITY(1, 1),
   [cod] char(3) UNIQUE NOT NULL,
   [continent_id] tinyint NOT NULL,
-  [country_name] varchar(25) UNIQUE NOT NULL
+  [country_name] varchar(25) NOT NULL
 )
 GO
 
@@ -400,7 +400,7 @@ CREATE TABLE [cities] (
   [id] smallint PRIMARY KEY IDENTITY(1, 1),
   [country_id] tinyint,
   [area_local_code] varchar(5),
-  [city_name] varchar(25) UNIQUE NOT NULL
+  [city_name] varchar(25) NOT NULL
 )
 GO
 
@@ -408,7 +408,7 @@ CREATE TABLE [airports] (
   [id] smallint PRIMARY KEY IDENTITY(1, 1),
   [iata_airport_code] char(3) UNIQUE NOT NULL,
   [city_id] smallint NOT NULL,
-  [airport_name] varchar(50) UNIQUE,
+  [airport_name] varchar(50) not null,
   [airport_address] varchar(255)
 )
 GO

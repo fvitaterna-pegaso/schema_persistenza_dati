@@ -13,7 +13,7 @@ go
 declare @continent_id tinyint;
 declare @country_id tinyint;
 
-----1. Tabella sex_types
+--1. Tabella sex_types
 --insert into sex_types (cod,sex_type_name)
 --	values('F', 'Sesso Femminile');
 
@@ -62,12 +62,70 @@ declare @country_id tinyint;
 --insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'PA', 'Palermo');
 
 --select @country_id = id from countries where cod = 'USA';
---insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'RM', 'Miami');
---insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'MI', 'Boston');
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,null, 'Miami');
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,null, 'Boston');
 
 --select @country_id = id from countries where cod = 'FRA';
---insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,'RM', 'Paris');
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,null, 'Paris');
+
+--select @country_id = id from countries where cod = 'PAN';
+--insert into cities (country_id, area_local_code, city_name) VALUES (@country_id,null, 'Panama');
 
 --select ci.*, co.country_name
 --from cities ci
 --inner join countries co on ci.country_id = co.id;
+
+----5. Tabella airports
+--select * from cities
+
+----FCO
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'FCO',id,'Aeroporto di Roma-Fiumicino','via dell''Aeroporto di Fiumicino,Roma'
+--from cities where city_name = 'Roma'; 
+
+----LIN
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'LIN',id,'Aeroporto di Milano-Linate','via Enrico Forlanini, Milano'
+--from cities where city_name = 'Milan'; 
+
+
+----TRS
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'TRS',id,'Aeroporto di Trieste-Ronchi dei Legionari','Via Aquileia 46, Ronchi dei Legionari'
+--from cities where city_name = 'Trieste'; 
+
+
+----MIA
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'MIA',id,'Aeroporto di Miami','via dell''Aeroporto di Fiumicino,Roma'
+--from cities where city_name = 'Miami'; 
+
+
+----CGD
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'CDG',id,'Aeroporto di Parigi-Charles de Gaulle','95700 Roissy-en-France'
+--from cities where city_name = 'Paris'; 
+
+
+----PTY
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'PTY',id,'Tocumen International Airport','Avenida Domingo Díaz, Panama City, Panama'
+--from cities where city_name = 'Panama'; 
+
+
+----BOS
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'BOS',id,'Aeroporto di Boston Logan','1 Harborside Dr'
+--from cities where city_name = 'Boston'; 
+
+
+----PMO
+--insert into airports (iata_airport_code, city_id, airport_name, airport_address)
+--select 'PMO',id,'Aeroporto di Palermo-Punta Raisi','Cinisi, Palermo'
+--from cities where city_name = 'Palermo';
+
+
+--select a.*, c.city_name
+--from airports a 
+--inner join cities c on a.city_id = c.id;
+
