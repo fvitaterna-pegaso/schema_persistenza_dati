@@ -190,3 +190,11 @@ declare @id_airline smallint;
 --select f.*, a.airline_name
 --from flights f inner join airlines a on f.id_airline = a.id;
 
+----8. Table reservations_systems
+--insert into reservation_systems (reservation_system_code, reservation_system_name) values('ITA','Prenotazioni ITA Airways');
+--insert into reservation_systems (reservation_system_code, reservation_system_name) values('AMA','Amadeus');
+--insert into reservation_systems (reservation_system_code, reservation_system_name) values('SAB','Sabre');
+--insert into reservation_systems (reservation_system_code, reservation_system_name) values('GAL','Galileo');
+--insert into reservation_systems (reservation_system_code, reservation_system_name) values('WOR','Worldspan');
+
+--select * from reservation_systems;
