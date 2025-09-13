@@ -15,6 +15,9 @@ declare @country_id tinyint;
 declare @id_airline smallint;
 declare @id_fare_type int;
 declare @idfare_type_option int;
+declare @id_sex_type tinyint;
+declare @id_telephone bigint;
+declare @id_telephone_type tinyint;
 
 /*
 declare @continent_id tinyint;
@@ -909,4 +912,21 @@ insert into payment_methods (cod,method_name) values ('BK', 'Bank Transfer');
 insert into payment_methods (cod,method_name) values ('PP', 'Paypal');
 select * from payment_methods;
 
+
+
+--16. table telephones
+insert into telephones (id_telephone_type,telephone_country_code,telephone_area_code, telephone_number)
+	select id,'+39','345','35412749'
+	from telephone_types
+	where cod = 'M';
+
+select * from telephones;
 */
+
+--17. Users
+--insert into users
+--	(user_name,
+--	password,
+--	first_name,
+--	last_name,
+--	birth_date,
