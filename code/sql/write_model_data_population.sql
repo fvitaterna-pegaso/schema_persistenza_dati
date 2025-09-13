@@ -17,6 +17,14 @@ declare @id_fare_type int;
 declare @idfare_type_option int;
 
 /*
+declare @continent_id tinyint;
+declare @country_id tinyint;
+declare @id_airline smallint;
+declare @id_fare_type int;
+declare @idfare_type_option int;
+
+
+
 --1. Tabella sex_types
 insert into sex_types (cod,sex_type_name)
 	values('F', 'Sesso Femminile');
@@ -875,12 +883,30 @@ select * from telephone_types;
 insert into identity_document_types (cod, type_name) values ('ID', 'ID Card'); 
 insert into identity_document_types (cod, type_name) values ('PS', 'Passport'); 
 select * from identity_document_types;
+
+
+--14. table airplanes
+insert into airplanes (model) values ('AIRBUS A319');
+insert into airplanes (model) values ('AIRBUS A318');
+insert into airplanes (model) values ('AIRBUS A320');
+insert into airplanes (model) values ('AIRBUS A321');
+insert into airplanes (model) values ('AIRBUS A220-300');
+insert into airplanes (model) values ('AIRBUS A220-100');
+insert into airplanes (model) values ('AIRBUS A220 PASSENGER');
+insert into airplanes (model) values ('AIRBUS A330-900NEO PASSENGER');
+insert into airplanes (model) values ('AIRBUS A321NEO');
+insert into airplanes (model) values ('AIRBUS A350-900');
+insert into airplanes (model) values ('AIRBUS A330');
+insert into airplanes (model) values ('AIRBUS A320NEO');
+insert into airplanes (model) values ('BOEING 777');
+select * from airplanes;
+
+
+
+--15. table payment_tables
+insert into payment_methods (cod,method_name) values ('CC', 'Credit Card');
+insert into payment_methods (cod,method_name) values ('BK', 'Bank Transfer');
+insert into payment_methods (cod,method_name) values ('PP', 'Paypal');
+select * from payment_methods;
+
 */
-
-
-
-
-
-
-
-

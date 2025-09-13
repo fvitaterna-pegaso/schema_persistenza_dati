@@ -488,7 +488,7 @@ GO
 
 CREATE TABLE [airplanes] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [id_flight] smallint NOT NULL,
+  --[id_flight] smallint NOT NULL,
   [model] varchar(50) NOT NULL
 )
 GO
