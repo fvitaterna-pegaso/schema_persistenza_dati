@@ -211,8 +211,18 @@ if exists(select name from sys.foreign_keys where name = 'city_to_users')
 
 GO
 
+if exists(select name from sys.foreign_keys where name = 'flight_schedule_to_base_prices')
+		and exists(select * from sys.tables where name = 'flight_schedule_base_prices')
+	alter table [flight_schedule_base_prices] drop constraint [flight_schedule_to_base_prices] 
 
 GO
+
+if exists(select name from sys.foreign_keys where name = 'fare_type_to_base_prices')
+		and exists(select * from sys.tables where name = 'flight_schedule_base_prices')
+	alter table [flight_schedule_base_prices] drop constraint [fare_type_to_base_prices] 
+
+GO
+
 /**********CHECK ESISTENZA TABELLE********************/
 
 /****** Object:  Table [dbo].[airlines]    Script Date: 07/09/2025 17:42:22 ******/
@@ -376,6 +386,9 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[users
 DROP TABLE [dbo].[users]
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[flight_schedule_base_prices]') AND type in (N'U'))
+DROP TABLE [dbo].[flight_schedule_base_prices]
+GO
 
 
 /**********CREAZIONE TABELLE********************/
@@ -536,6 +549,15 @@ CREATE TABLE [flight_schedules] (
   [arrival_time] time NOT NULL
 )
 GO
+
+CREATE TABLE [flight_schedule_base_prices] (
+  [id] bigint PRIMARY KEY IDENTITY(1, 1),
+  [id_flight_schedule] bigint NOT NULL,
+  [id_fare_type] int NOT NULL,
+  [base_price] money NOT NULL
+)
+GO
+
 
 CREATE TABLE [reservations] (
   [id] bigint PRIMARY KEY,
@@ -730,4 +752,10 @@ ALTER TABLE [users] ADD CONSTRAINT [telephone_to_users] FOREIGN KEY ([id_telepho
 GO
 
 ALTER TABLE [users] ADD CONSTRAINT [city_to_users] FOREIGN KEY ([id_city]) REFERENCES [cities] ([id])
+GO
+
+ALTER TABLE [flight_schedule_base_prices] ADD CONSTRAINT [flight_schedule_to_base_prices] FOREIGN KEY ([id_flight_schedule]) REFERENCES [flight_schedules] ([id])
+GO
+
+ALTER TABLE [flight_schedule_base_prices] ADD CONSTRAINT [fare_type_to_base_prices] FOREIGN KEY ([id_fare_type]) REFERENCES [fare_types] ([id])
 GO
