@@ -19,10 +19,11 @@ declare @id_sex_type tinyint;
 declare @id_telephone bigint;
 declare @id_telephone_type tinyint;
 declare @id_city smallint;
+declare @id_fare_family tinyint;
 
 declare @run_entire_script bit;
 
-set @run_entire_script = 0;
+set @run_entire_script = 1;
 
 begin try
 
@@ -215,9 +216,16 @@ begin try
 
 		select * from reservation_systems;
 
-		--9. table fare_types
-		--10. table fare_type_options
-		--11. table fare_type_details
+		--9 table fare_family
+		insert into fare_type_families (family_code,family_name) values ('E','Economy');
+		insert into fare_type_families (family_code,family_name) values ('P','Premium');
+		insert into fare_type_families (family_code,family_name) values ('B','Business');
+
+		select * from fare_type_families;
+
+		--10. table fare_types
+		--11. table fare_type_options
+		--12. table fare_type_details
 
 		insert into fare_type_options (option_code) values ('HAND_LUGGAGE_DIM'); --dimensioni bagaglio a mano
 		--prezzo base per bagaglio in stiva (se = 0 il bagaglio in stiva sarà sempre gratuito per la tariffa collegata; se > 0 si tratta del prezzo base che potrà variare
@@ -236,8 +244,9 @@ begin try
 		--ITA Airways
 		select @id_airline = id from airlines where iata_airline_code = 'AZ';
 
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
 		--Economy Light
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOL','Economy Light');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'ECOL','Economy Light');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOL';
 
@@ -273,7 +282,7 @@ begin try
 
 
 		--Economy Classic
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOC','Economy Classic');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family ,@id_airline,'ECOC','Economy Classic');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOC';
 
@@ -309,7 +318,7 @@ begin try
 
 
 		--Economy Classic Plus
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOCP','Economy Classic Plus');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'ECOCP','Economy Classic Plus');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOCP';
 
@@ -350,7 +359,7 @@ begin try
 
 
 		--Economy Flex
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOF','Economy Flex');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'ECOF','Economy Flex');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOF';
 
@@ -390,8 +399,9 @@ begin try
 			where option_code = 'REFUND_TAX';
 
 
+		select @id_fare_family = id from fare_type_families where family_code = 'P';
 		--Premium Classic
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PREC','Premium Classic');
+		insert into fare_types (id_fare_type_family,id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'PREC','Premium Classic');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PREC';
 
@@ -432,7 +442,7 @@ begin try
 
 
 		--Premium Full Flex
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PREF','Premium Full Flex');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'PREF','Premium Full Flex');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PREF';
 
@@ -472,8 +482,9 @@ begin try
 			where option_code = 'REFUND_TAX';
 
 
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
 		--Business Classic
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSC','Business Classic');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'BUSC','Business Classic');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSC';
 
@@ -509,7 +520,7 @@ begin try
 
 
 		--Business Flex
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSF','Business Flex');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'BUSF','Business Flex');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSF';
 
@@ -548,11 +559,13 @@ begin try
 			from fare_type_options
 			where option_code = 'REFUND_TAX';
 
-		select a.airline_name, 
+		select a.airline_name,
+			   fm.family_name,
 			   ft.*,
 			   fo.*,
 			   fd.*
 		from fare_types ft
+		inner join fare_type_families fm on ft.id_fare_type_family = fm.id
 		inner join airlines a on ft.id_airline = a.id
 		inner join fare_type_details fd on fd.id_fare_type = ft.id
 		inner join fare_type_options fo on fd.id_fare_type_option = fo.id
@@ -562,8 +575,9 @@ begin try
 		--Air France
 		select @id_airline = id from airlines where iata_airline_code = 'AF';
 
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
 		--Economy Light
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOL','Economy Light');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'ECOL','Economy Light');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOL';
 
@@ -599,7 +613,7 @@ begin try
 
 
 		--Economy Standard
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOS','Economy Standard');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'ECOS','Economy Standard');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOS';
 
@@ -635,7 +649,7 @@ begin try
 
 
 		--Economy Standard Plus
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOSP','Economy Standard Plus');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'ECOSP','Economy Standard Plus');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOSP';
 
@@ -672,7 +686,7 @@ begin try
 
 
 		--Economy Flex
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOF','Economy Flex');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'ECOF','Economy Flex');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOF';
 
@@ -712,8 +726,9 @@ begin try
 			where option_code = 'REFUND_TAX';
 
 
+		select @id_fare_family = id from fare_type_families where family_code = 'P';
 		--Premium Standard
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PRES','Premium Standard');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'PRES','Premium Standard');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PRES';
 
@@ -750,7 +765,7 @@ begin try
 
 
 		--Premium Flex
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PREF','Premium Flex');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'PREF','Premium Flex');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PREF';
 
@@ -790,8 +805,9 @@ begin try
 			where option_code = 'REFUND_TAX';
 
 
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
 		--Business Standard
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSS','Business Standard');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'BUSS','Business Standard');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSS';
 
@@ -827,7 +843,7 @@ begin try
 
 
 		--Business Flex
-		insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSF','Business Flex');
+		insert into fare_types (id_fare_type_family, id_airline, fare_code, fare_name) values (@id_fare_family, @id_airline,'BUSF','Business Flex');
 
 		select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSF';
 
@@ -867,10 +883,12 @@ begin try
 			where option_code = 'REFUND_TAX';
 
 		select a.airline_name, 
+			   fm.family_name,
 			   ft.*,
 			   fo.*,
 			   fd.*
 		from fare_types ft
+		inner join fare_type_families fm on ft.id_fare_type_family = fm.id
 		inner join airlines a on ft.id_airline = a.id
 		inner join fare_type_details fd on fd.id_fare_type = ft.id
 		inner join fare_type_options fo on fd.id_fare_type_option = fo.id
@@ -1017,6 +1035,9 @@ begin try
 		from airlines a inner join price_components p on a.id = p.id_airline;
 
 		end
+
+		--19.airplane_seats
+
 	commit transaction
 	print 'Script eseguito con successo';
 

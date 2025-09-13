@@ -229,6 +229,23 @@ if exists(select name from sys.foreign_keys where name = 'airline_to_price_compo
 
 GO
 
+if exists(select name from sys.foreign_keys where name = 'fare_type_family_to_fare_types')
+		and exists(select * from sys.tables where name = 'fare_types')
+	alter table [fare_types] drop constraint [fare_type_family_to_fare_types] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'airline_to_airplane_seats')
+		and exists(select * from sys.tables where name = 'airplane_seats')
+	alter table [airplane_seats] drop constraint [airline_to_airplane_seats] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'fare_type_family_to_airplane_seats')
+		and exists(select * from sys.tables where name = 'airplane_seats')
+	alter table [airplane_seats] drop constraint [fare_type_family_to_airplane_seats] 
+
+GO
 /**********CHECK ESISTENZA TABELLE********************/
 
 /****** Object:  Table [dbo].[airlines]    Script Date: 07/09/2025 17:42:22 ******/
@@ -396,6 +413,10 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fligh
 DROP TABLE [dbo].[flight_schedule_base_prices]
 GO
 
+--fare_type_families
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fare_type_families]') AND type in (N'U'))
+DROP TABLE [dbo].[fare_type_families]
+GO
 
 /**********CREAZIONE TABELLE********************/
 
@@ -470,8 +491,16 @@ CREATE TABLE [reservation_systems] (
 )
 GO
 
+CREATE TABLE [fare_type_families] (
+  [id] tinyint PRIMARY KEY IDENTITY(1, 1),
+  [family_code] char(1) NOT NULL,
+  [family_name] varchar(10) NOT NULL
+)
+GO
+
 CREATE TABLE [fare_types] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
+  [id_fare_type_family] tinyint NOT NULL,
   [id_airline] smallint NOT NULL,
   [fare_code] varchar(5) NOT NULL,
   [fare_name] varchar(25) NOT NULL
@@ -542,6 +571,8 @@ GO
 CREATE TABLE [airplane_seats] (
   [id] bigint PRIMARY KEY IDENTITY(1, 1),
   [id_airplane] int NOT NULL,
+  [id_airline] smallint NOT NULL,
+  [id_fare_type_family] tinyint NOT NULL,
   [seat] varchar(4)
 )
 GO
@@ -771,3 +802,13 @@ GO
 
 ALTER TABLE [price_components] ADD CONSTRAINT [airline_to_price_components] FOREIGN KEY ([id_airline]) REFERENCES [airlines] ([id])
 GO
+
+ALTER TABLE [fare_types] ADD CONSTRAINT [fare_type_family_to_fare_types] FOREIGN KEY ([id_fare_type_family]) REFERENCES [fare_type_families] ([id])
+GO
+
+ALTER TABLE [airplane_seats] ADD CONSTRAINT [airline_to_airplane_seats] FOREIGN KEY ([id_airline]) REFERENCES [airlines] ([id])
+GO
+
+ALTER TABLE [airplane_seats] ADD CONSTRAINT [fare_type_family_to_airplane_seats] FOREIGN KEY ([id_fare_type_family]) REFERENCES [fare_type_families] ([id])
+GO
+
