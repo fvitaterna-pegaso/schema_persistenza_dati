@@ -359,9 +359,9 @@ DROP TABLE [dbo].[sex_types]
 GO
 USE [db_abdf0e_fvitapegaso]
 GO
-/****** Object:  Table [dbo].[telephone_type]    Script Date: 07/09/2025 17:42:29 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[telephone_type]') AND type in (N'U'))
-DROP TABLE [dbo].[telephone_type]
+/****** Object:  Table [dbo].[telephone_types]    Script Date: 07/09/2025 17:42:29 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[telephone_types]') AND type in (N'U'))
+DROP TABLE [dbo].[telephone_types]
 GO
 USE [db_abdf0e_fvitapegaso]
 GO
@@ -472,7 +472,7 @@ CREATE TABLE [fare_type_details] (
 )
 GO
 
-CREATE TABLE [telephone_type] (
+CREATE TABLE [telephone_types] (
   [id] tinyint PRIMARY KEY IDENTITY(1, 1),
   [cod] varchar(5) UNIQUE NOT NULL,
   [type_name] varchar(50) NOT NULL
@@ -663,7 +663,7 @@ GO
 ALTER TABLE [fare_type_details] ADD CONSTRAINT [fare_type_options_to_details] FOREIGN KEY ([id_fare_type_option]) REFERENCES [fare_type_options] ([id])
 GO
 
-ALTER TABLE [telephones] ADD CONSTRAINT [telephone_type_to_telephones] FOREIGN KEY ([id_telephone_type]) REFERENCES [telephone_type] ([id])
+ALTER TABLE [telephones] ADD CONSTRAINT [telephone_type_to_telephones] FOREIGN KEY ([id_telephone_type]) REFERENCES [telephone_types] ([id])
 GO
 
 ALTER TABLE [reservations_telephones] ADD CONSTRAINT [reservation_to_reservations_telephones] FOREIGN KEY ([id_reservation]) REFERENCES [reservations] ([id])
