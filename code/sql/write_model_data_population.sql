@@ -1146,7 +1146,23 @@ begin try
 
 		end
 
-		--21
+		--21. airplane_seats
+		--AIRBUS A319
+		--AIRBUS A220-100 
+		--AIRBUS A220 PASSENGER
+		--AIRBUS A330-900NEO PASSENGER
+		--AIRBUS A321NEO
+		--AIRBUS A350-900 (AF)
+		--AIRBUS A220-300
+		--AIRBUS A320
+		--AIRBUS A330
+		--AIRBUS A320NEO
+
+
+
+
+
+
 
 
 
