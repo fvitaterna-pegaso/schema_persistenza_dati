@@ -223,6 +223,12 @@ if exists(select name from sys.foreign_keys where name = 'fare_type_to_base_pric
 
 GO
 
+if exists(select name from sys.foreign_keys where name = 'airline_to_price_components')
+		and exists(select * from sys.tables where name = 'price_components')
+	alter table [price_components] drop constraint [airline_to_price_components] 
+
+GO
+
 /**********CHECK ESISTENZA TABELLE********************/
 
 /****** Object:  Table [dbo].[airlines]    Script Date: 07/09/2025 17:42:22 ******/
@@ -434,8 +440,9 @@ GO
 
 CREATE TABLE [price_components] (
   [id] tinyint PRIMARY KEY IDENTITY(1, 1),
-  [price_component_code] varchar(3) UNIQUE NOT NULL,
-  [price_component_name] varchar(50) NOT NULL,
+  [id_airline] smallint NOT NULL,
+  [price_component_code] varchar(10) NOT NULL,
+  [price_component_name] varchar(255) NOT NULL,
   [price_component_regex] varchar(1025)
 )
 GO
@@ -641,7 +648,9 @@ CREATE TABLE [telephones] (
 )
 GO
 
-/**********CREAZIONE ESISTENZA KEYS, CONSTRAINT, ETC********************/
+/**********CREAZIONE  KEYS, CONSTRAINT, ETC********************/
+
+CREATE UNIQUE INDEX [price_components_index_0] ON [price_components] ("id_airline", "price_component_code")
 
 GO
 
@@ -758,4 +767,7 @@ ALTER TABLE [flight_schedule_base_prices] ADD CONSTRAINT [flight_schedule_to_bas
 GO
 
 ALTER TABLE [flight_schedule_base_prices] ADD CONSTRAINT [fare_type_to_base_prices] FOREIGN KEY ([id_fare_type]) REFERENCES [fare_types] ([id])
+GO
+
+ALTER TABLE [price_components] ADD CONSTRAINT [airline_to_price_components] FOREIGN KEY ([id_airline]) REFERENCES [airlines] ([id])
 GO
