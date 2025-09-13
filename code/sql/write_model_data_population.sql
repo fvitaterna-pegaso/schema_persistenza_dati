@@ -869,7 +869,14 @@ insert into telephone_types (cod, type_name) VALUES('H','Home');
 insert into telephone_types (cod, type_name) VALUES('M','Mobile');
 insert into telephone_types (cod, type_name) VALUES('B','Office');
 select * from telephone_types;
+
+
+--13 Table identity_document_types
+insert into identity_document_types (cod, type_name) values ('ID', 'ID Card'); 
+insert into identity_document_types (cod, type_name) values ('PS', 'Passport'); 
+select * from identity_document_types;
 */
+
 
 
 
