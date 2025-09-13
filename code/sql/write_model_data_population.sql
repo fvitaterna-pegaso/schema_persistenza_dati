@@ -20,10 +20,12 @@ declare @id_telephone bigint;
 declare @id_telephone_type tinyint;
 declare @id_city smallint;
 declare @id_fare_family tinyint;
+declare @id_flight smallint;
+declare @id_airplane int;
 
 declare @run_entire_script bit;
 
-set @run_entire_script = 1;
+set @run_entire_script = 0;
 
 begin try
 
@@ -895,20 +897,20 @@ begin try
 		where a.iata_airline_code = 'AF'
 
 
-		--12. Table telephone_types
+		--13. Table telephone_types
 		insert into telephone_types (cod, type_name) VALUES('H','Home');
 		insert into telephone_types (cod, type_name) VALUES('M','Mobile');
 		insert into telephone_types (cod, type_name) VALUES('B','Office');
 		select * from telephone_types;
 
 
-		--13 Table identity_document_types
+		--14 Table identity_document_types
 		insert into identity_document_types (cod, type_name) values ('ID', 'ID Card'); 
 		insert into identity_document_types (cod, type_name) values ('PS', 'Passport'); 
 		select * from identity_document_types;
 
 
-		--14. table airplanes
+		--15. table airplanes
 		insert into airplanes (model) values ('AIRBUS A319');
 		insert into airplanes (model) values ('AIRBUS A318');
 		insert into airplanes (model) values ('AIRBUS A320');
@@ -926,7 +928,7 @@ begin try
 
 
 
-		--15. table payment_tables
+		--16. table payment_tables
 		insert into payment_methods (cod,method_name) values ('CC', 'Credit Card');
 		insert into payment_methods (cod,method_name) values ('BK', 'Bank Transfer');
 		insert into payment_methods (cod,method_name) values ('PP', 'Paypal');
@@ -934,7 +936,7 @@ begin try
 
 
 
-		--16. table telephones
+		--17. table telephones
 		insert into telephones (id_telephone_type,telephone_country_code,telephone_area_code, telephone_number)
 			select id,'+39','345','35412749'
 			from telephone_types
@@ -942,7 +944,7 @@ begin try
 
 		select * from telephones;
 
-		--17. Users
+		--18. Users
 
 		select @id_sex_type =  id from sex_types where cod = 'M';
 		select @id_city = id from cities where city_name = 'Rome';
@@ -980,7 +982,7 @@ begin try
 
 		select * from users;
 
-		--18. price_components
+		--19. price_components
 		select @id_airline = id from airlines where iata_airline_code = 'AZ';
 		
 		insert into price_components (id_airline,price_component_code, price_component_name)
@@ -1034,9 +1036,120 @@ begin try
 		select a.airline_name, p.*
 		from airlines a inner join price_components p on a.id = p.id_airline;
 
+
+		--20.flight_schedule
+
+		--Solo andata con 1 persona
+		--		a. FCO-LIN  7:00-8:10 AZ2010 AIRBUS A319
+		select @id_flight = id from flights where iata_flight_code = 'AZ2010';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A319';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('7:00' as time), cast('2025-11-24' as date), cast('8:10' as time));
+
+		--Solo andata 1 persona con scali
+		--a. 9:40-10:35  12:00-13:25 FCO-NAP-LIN AZ1263 + AZ1288 AIRBUS A220-100 + AIRBUS A319
+		select @id_flight = id from flights where iata_flight_code = 'AZ1263';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A220-100';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('9:40' as time), cast('2025-11-24' as date), cast('10:35' as time));
+
+		select @id_flight = id from flights where iata_flight_code = 'AZ1288';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A319';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('12:00' as time), cast('2025-11-24' as date), cast('13:25' as time));
+
+		--b. 18:00-19:10 - 20:00-20:55  FCO-LIN-TRS AZ2050 + AZ1353  AIRBUS A319 + AIRBUS A220-100
+		select @id_flight = id from flights where iata_flight_code = 'AZ2050';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A319';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('18:00' as time), cast('2025-11-24' as date), cast('19:10' as time));
+
+		select @id_flight = id from flights where iata_flight_code = 'AZ1353';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A220-100';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('20:00' as time), cast('2025-11-24' as date), cast('20:55' as time));
+
+		--Solo andata 2 persone
+		--FCO-TRS 17:20-18:30; AZ1359; AIRBUS A220 PASSENGER
+		select @id_flight = id from flights where iata_flight_code = 'AZ1359';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A220 PASSENGER';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('17:30' as time), cast('2025-11-24' as date), cast('18:30' as time));
+
+
+		--Andata/Ritorno 1 persona FCO-MIA
+		--Andata 10:35-16:00 AZ630 AIRBUS A330-900NEO PASSENGER
+		select @id_flight = id from flights where iata_flight_code = 'AZ630';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-900NEO PASSENGER';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('10:35' as time), cast('2025-11-24' as date), cast('16:00' as time));
+		--Ritorno 19:30-11:40 (+1 giorno) AZ631 AIRBUS A330-900NEO PASSENGER
+		select @id_flight = id from flights where iata_flight_code = 'AZ631';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-900NEO PASSENGER';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-12-01' as date), cast('19:30' as time), cast('2025-12-02' as date), cast('11:40' as time));
+
+
+		--Andata/Ritorno 2 persone con parte in carico ad altro vettore
+		--Andata
+		--FCO-CGD  8:35-10:45 AZ316 AIRBUS A321NEO
+		select @id_flight = id from flights where iata_flight_code = 'AZ316';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A320NEO';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('8:35' as time), cast('2025-11-24' as date), cast('10:45' as time));
+		--CDG -PTY (Panama)  13:55-17:45 AF0474 AIRBUS A350-900
+		select @id_flight = id from flights where iata_flight_code = 'AF0474';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A350-900';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('13:55' as time), cast('2025-11-24' as date), cast('17:45' as time));
+		--Ritorno
+		--PTY-CGD 19:55-13:15 (+1 giorno) - AF0475 - AIRBUS A350-900
+		select @id_flight = id from flights where iata_flight_code = 'AF0475';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A350-900';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-12-01' as date), cast('19:55' as time), cast('2025-12-02' as date), cast('13:15' as time));
+		--CGD-FCO 14:05-16:10 - AZ333 - AIRBUS A220-300
+		select @id_flight = id from flights where iata_flight_code = 'AZ333';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A220-300';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-12-02' as date), cast('14:05' as time), cast('2025-12-02' as date), cast('16:10' as time));
+
+
+		--Andata/Ritorno 3 persone, 1 bambino,
+		--Andata
+		--PMO (Palermo) - FCO 7:20-8:30 - AZ1774 - AIRBUS A320
+		select @id_flight = id from flights where iata_flight_code = 'AZ1774';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A320';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('7:20' as time), cast('2025-11-24' as date), cast('8:30' as time));
+		--FCO - BOS 10:25-13:40 - AZ614 - AIRBUS A330
+		select @id_flight = id from flights where iata_flight_code = 'AZ614';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('10:25' as time), cast('2025-11-24' as date), cast('13:40' as time));
+		--Ritorno
+		--BOS-FCO 17:05-07:05 (+1 giorno) - AZ615 - AIRBUS A330
+		select @id_flight = id from flights where iata_flight_code = 'AZ615';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-12-01' as date), cast('17:05' as time), cast('2025-12-02' as date), cast('07:05' as time));
+		--FCO-PMO 8:15-9:20 AZ1777 AIRBUS A320NEO
+		select @id_flight = id from flights where iata_flight_code = 'AZ1777';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A320NEO';
+		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
+			values (@id_flight, @id_airplane, cast('2025-12-02' as date), cast('8:15' as time), cast('2025-12-02' as date), cast('9:20' as time));
+
+		select f.iata_flight_code, a.model, fs.*
+		from flight_schedules fs
+		inner join flights f on fs.id_flight = f.id
+		inner join airplanes a on fs.id_airplane = a.id;
+
 		end
 
-		--19.airplane_seats
+		--21
+
+
+
 
 	commit transaction
 	print 'Script eseguito con successo';
