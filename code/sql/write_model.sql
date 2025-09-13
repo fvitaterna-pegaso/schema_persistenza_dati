@@ -515,7 +515,7 @@ CREATE TABLE [users] (
   [id_city] smallint NOT NULL,
   [frequent_flyer_code] varchar(15),
   [frequent_flyer_exp_date] date,
-  [freuqent_flyer_point_balance] int
+  [frequent_flyer_point_balance] int
 )
 GO
 
