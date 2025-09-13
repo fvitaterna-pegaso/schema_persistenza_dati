@@ -55,6 +55,12 @@ if exists(select name from sys.foreign_keys where name = 'origin_destination_to_
 
 GO
 
+if exists(select name from sys.foreign_keys where name = 'airline_to_fare_types')
+		and exists(select * from sys.tables where name = 'fare_types')
+	alter table [fare_types] drop constraint [airline_to_fare_types] 
+
+GO
+
 if exists(select name from sys.foreign_keys where name = 'fare_type_to_reservations')
 		and exists(select * from sys.tables where name = 'reservations')
 	alter table [reservations] drop constraint [fare_type_to_reservations] 
@@ -446,20 +452,22 @@ GO
 
 CREATE TABLE [fare_types] (
   [id] int PRIMARY KEY IDENTITY(1, 1),
-  [fare_code] varchar(5) UNIQUE NOT NULL,
+  [id_airline] smallint NOT NULL,
+  [fare_code] varchar(5) NOT NULL,
   [fare_name] varchar(25) NOT NULL
 )
 GO
 
 CREATE TABLE [fare_type_options] (
-  [id] smallint PRIMARY KEY,
-  [option_code] varchar(15) UNIQUE NOT NULL
+  [id] smallint PRIMARY KEY IDENTITY(1,1),
+  [option_code] varchar(25) UNIQUE NOT NULL
 )
 GO
 
 CREATE TABLE [fare_type_details] (
   [id_fare_type] int NOT NULL,
   [id_fare_type_option] smallint NOT NULL,
+  [detail_value] varchar(255) NOT NULL,
   PRIMARY KEY ([id_fare_type], [id_fare_type_option])
 )
 GO
@@ -613,6 +621,11 @@ GO
 
 /**********CREAZIONE ESISTENZA KEYS, CONSTRAINT, ETC********************/
 
+GO
+
+CREATE UNIQUE INDEX [fare_types_index_0] ON [fare_types] ("id_airline", "fare_code")
+
+GO
 
 CREATE UNIQUE INDEX [flight_schedules_index_0] ON [flight_schedules] ("id_flight", "departure_date")
 GO
@@ -660,6 +673,9 @@ ALTER TABLE [reservations_telephones] ADD CONSTRAINT [telephone_to_reservations_
 GO
 
 ALTER TABLE [reservations] ADD CONSTRAINT [reservation_to_status_reservations] FOREIGN KEY ([id_reservations_status]) REFERENCES [reservations_statuses] ([id])
+GO
+
+ALTER TABLE [fare_types] ADD CONSTRAINT [airline_to_fare_types] FOREIGN KEY ([id_airline]) REFERENCES [airlines] ([id])
 GO
 
 ALTER TABLE [flights] ADD CONSTRAINT [airline_to_flights] FOREIGN KEY ([id_airline]) REFERENCES [airlines] ([id])

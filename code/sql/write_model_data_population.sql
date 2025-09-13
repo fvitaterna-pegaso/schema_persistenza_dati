@@ -13,6 +13,8 @@ go
 declare @continent_id tinyint;
 declare @country_id tinyint;
 declare @id_airline smallint;
+declare @id_fare_type int;
+declare @idfare_type_option int;
 
 ----1. Tabella sex_types
 --insert into sex_types (cod,sex_type_name)
@@ -198,3 +200,674 @@ declare @id_airline smallint;
 --insert into reservation_systems (reservation_system_code, reservation_system_name) values('WOR','Worldspan');
 
 --select * from reservation_systems;
+
+----9. table fare_types
+----10. table fare_type_options
+----11. table fare_type_details
+
+--insert into fare_type_options (option_code) values ('HAND_LUGGAGE_DIM'); --dimensioni bagaglio a mano
+----prezzo base per bagaglio in stiva (se = 0 il bagaglio in stiva sarà sempre gratuito per la tariffa collegata; se > 0 si tratta del prezzo base che potrà variare
+----al momento dell'acquisto tramite calcoli applicativi legati a requisiti di eventuale dinamicizzaione della tariffa
+--insert into fare_type_options (option_code) values ('CHECKED_BAGGAGE_BASE_TAX');
+--insert into fare_type_options (option_code) values ('CHECKED_BAGGAGE_DIM'); --dimensioni bagaglio in stiva
+----prezzo base per la scelta del posto (se = 0 la scelta sarà sempre gratuita per la tariffa collegata; se > 0 si tratta del prezzo base che potrà variare
+----al momento dell'acquisto tramite calcoli applicativi legati a requisiti di eventuale dinamicizzaione della tariffa
+--insert into fare_type_options (option_code) values ('SEAT_SELECTION_TAX'); 
+----Stesse considerazioni delle altre opzioni di tipo tax
+--insert into fare_type_options (option_code) values ('FLIGHT_CHANGE_TAX'); --penale per cambio volo
+--insert into fare_type_options (option_code) values ('REFUND_ALLOWED'); --rimborso permesso (Boolean: 0/1)
+----Stesse considerazioni delle altre opzioni di tipo tax
+--insert into fare_type_options (option_code) values ('REFUND_TAX'); --tassa prevista per rimborso
+
+----ITA Airways
+--select @id_airline = id from airlines where iata_airline_code = 'AZ';
+
+----Economy Light
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOL','Economy Light');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOL';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '50'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '25'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '170'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+----Economy Classic
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOC','Economy Classic');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOC';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '25'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '120'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+----Economy Classic Plus
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOCP','Economy Classic Plus');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOCP';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '150'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+
+----Economy Flex
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOF','Economy Flex');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOF';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+
+----Premium Classic
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PREC','Premium Classic');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PREC';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '25'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '150'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+
+----Premium Full Flex
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PREF','Premium Full Flex');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PREF';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+
+----Business Classic
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSC','Business Classic');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSC';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x32Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '25'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+----Business Flex
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSF','Business Flex');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSF';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1 x 8Kg + 1 accessorio'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x32Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+--select a.airline_name, 
+--	   ft.*,
+--	   fo.*,
+--	   fd.*
+--from fare_types ft
+--inner join airlines a on ft.id_airline = a.id
+--inner join fare_type_details fd on fd.id_fare_type = ft.id
+--inner join fare_type_options fo on fd.id_fare_type_option = fo.id
+--where a.iata_airline_code = 'AZ'
+
+
+----Air France
+--select @id_airline = id from airlines where iata_airline_code = 'AF';
+
+----Economy Light
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOL','Economy Light');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOL';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '150'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '25'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '200'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+----Economy Standard
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOS','Economy Standard');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOS';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '200'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+----Economy Standard Plus
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOSP','Economy Standard Plus');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOSP';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+
+----Economy Flex
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'ECOF','Economy Flex');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'ECOF';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+
+----Premium Standard
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PRES','Premium Standard');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PRES';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2 colli 55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+
+----Premium Flex
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'PREF','Premium Flex');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'PREF';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2 colli 55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x23Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+
+----Business Standard
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSS','Business Standard');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSS';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2 colli 55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x32Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+
+----Business Flex
+--insert into fare_types (id_airline, fare_code, fare_name) values (@id_airline,'BUSF','Business Flex');
+
+--select @id_fare_type = id from fare_types where id_airline = @id_airline and fare_code = 'BUSF';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2 colli 55 x 35 x 25 cm + 1 accessorio 40 x 30 x 15 cm'
+--	from fare_type_options
+--	where option_code = 'HAND_LUGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_BASE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '2x32Kg'
+--	from fare_type_options
+--	where option_code = 'CHECKED_BAGGAGE_DIM';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'SEAT_SELECTION_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'FLIGHT_CHANGE_TAX';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '1'
+--	from fare_type_options
+--	where option_code = 'REFUND_ALLOWED';
+
+--insert into fare_type_details
+--	select @id_fare_type, id, '0'
+--	from fare_type_options
+--	where option_code = 'REFUND_TAX';
+
+--select a.airline_name, 
+--	   ft.*,
+--	   fo.*,
+--	   fd.*
+--from fare_types ft
+--inner join airlines a on ft.id_airline = a.id
+--inner join fare_type_details fd on fd.id_fare_type = ft.id
+--inner join fare_type_options fo on fd.id_fare_type_option = fo.id
+--where a.iata_airline_code = 'AF'
+
+
+
+
+
+
+
+
+
+
