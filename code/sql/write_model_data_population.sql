@@ -20,23 +20,16 @@ declare @id_telephone bigint;
 declare @id_telephone_type tinyint;
 declare @id_city smallint;
 
+declare @run_entire_script bit;
+
+set @run_entire_script = 0;
+
 begin try
 
 	begin transaction
 
-
-		/*
-		declare @continent_id tinyint;
-		declare @country_id tinyint;
-		declare @id_airline smallint;
-		declare @id_fare_type int;
-		declare @idfare_type_option int;
-		declare @id_sex_type tinyint;
-		declare @id_telephone bigint;
-		declare @id_telephone_type tinyint;
-
-
-
+		if @run_entire_script = 1
+		begin
 		--1. Tabella sex_types
 		insert into sex_types (cod,sex_type_name)
 			values('F', 'Sesso Femminile');
@@ -967,16 +960,71 @@ begin try
 			CAST('2025-12-31' as date),
 			1000);
 
-	select * from users;
+		select * from users;
 
-*/
+		--18. price_components
+		select @id_airline = id from airlines where iata_airline_code = 'AZ';
+		
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'BASE','Base price for the flight');
 
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'FUEL','Fuel Surcharge');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'BAGGAGE','Baggage Security Fee');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'VAT','Value Added Tax');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'MUNICIPAL','Municipal Tax');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'BOARDING','Boarding fee');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'PASS_SERV','Passengers Service');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'SECURITY','Security Fee');
+
+		select @id_airline = id from airlines where iata_airline_code = 'AF';
+		
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'BASE','Base price for the flight');
+
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'BAGGAGE','Baggage Security Fee');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'VAT','Value Added Tax');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'MUNICIPAL','Municipal Tax');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'BOARDING','Boarding fee');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'PASS_SERV','Passengers Service');
+
+		insert into price_components (id_airline,price_component_code, price_component_name)
+			values(@id_airline,'SECURITY','Security Fee');
+
+		select a.airline_name, p.*
+		from airlines a inner join price_components p on a.id = p.id_airline;
+
+		end
 	commit transaction
+	print 'Script eseguito con successo';
 
 
 end try
 begin catch
 	rollback transaction
 
-	select ERROR_NUMBER() + ' - ' + ERROR_MESSAGE(); 
+	print ERROR_NUMBER();
+	PRINT ERROR_MESSAGE(); 
 end catch
