@@ -1540,11 +1540,20 @@ begin try
 		inner join flights v on s.id_origin_airport = v.id
 		inner join fare_types f on p.id_fare_type = f.id
 
+
+		--23.reservations_statuses
+		insert into reservations_statuses (cod,status_name, status_description) values ('PRG','IN_PROGRESS','Prenotazione in corso');
+		insert into reservations_statuses (cod,status_name, status_description) values ('CRT','CREATED','Prenotazione creata');
+		insert into reservations_statuses (cod,status_name, status_description) values ('BHT','BOUGHT','Biglietti acquistati');
+		insert into reservations_statuses (cod,status_name, status_description) values ('CKA','AVAIL_CHECK_IN','Check-In Disponibile');
+		insert into reservations_statuses (cod,status_name, status_description) values ('CKD','CHECK_IN_DONE','Check-In Effettuato');
+		insert into reservations_statuses (cod,status_name, status_description) values ('OGN','ON_GOING','Viaggio in corso');
+		insert into reservations_statuses (cod,status_name, status_description) values ('END','FINISHED','Viaggio terminato');
+		insert into reservations_statuses (cod,status_name, status_description) values ('CAN','CANCELED','Prenotazione non attiva o cancellata');
+
+		select * from reservations_statuses;
+
 		end
-
-		--23.
-		
-
 
 	commit transaction
 	print 'Script eseguito con successo';
