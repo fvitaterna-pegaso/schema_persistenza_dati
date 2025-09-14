@@ -880,3 +880,33 @@ begin
 end
 
 go
+
+if exists(select * from sys.procedures where name = 'sp_add_flight_schedule_base_prices')
+	drop procedure sp_add_flight_schedule_base_prices;
+
+go
+
+go
+
+create procedure sp_add_flight_schedule_base_prices
+	@iata_flight_code varchar(6),
+	@departure_date varchar(10),
+	@fare_code varchar(5),
+	@base_price money
+as
+begin
+	declare @id_flight_schedule bigint;
+	declare @id_fare_type int;
+
+	select @id_flight_schedule = fs.id
+	from flight_schedules fs
+	inner join flights f on fs.id_flight = f.id
+	where f.iata_flight_code = @iata_flight_code and fs.departure_date = CAST(@departure_date as date);
+
+	select @id_fare_type = id from fare_types where fare_code = @fare_code;
+	
+	insert into flight_schedule_base_prices (id_flight_schedule, id_fare_type, base_price)
+		values (@id_flight_schedule, @id_fare_type, @base_price);
+
+end
+

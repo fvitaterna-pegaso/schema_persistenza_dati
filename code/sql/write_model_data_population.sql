@@ -24,12 +24,11 @@ declare @id_flight smallint;
 declare @id_airplane int;
 declare @id_origin_airport smallint
 declare @id_destination_airport smallint
-
-declare @j int;
+declare @id_flight_schedule bigint;
 
 declare @run_entire_script bit;
 
-set @run_entire_script = 1;
+set @run_entire_script = 0;
 
 begin try
 
@@ -1040,7 +1039,6 @@ begin try
 		select a.airline_name, p.*
 		from airlines a inner join price_components p on a.id = p.id_airline;
 
-		select * from airports
 		--20.flight_schedule
 		
 		--Solo andata con 1 persona
@@ -1169,12 +1167,13 @@ begin try
 		insert into flight_schedules (id_flight,id_airplane,id_origin_airport, id_destination_airport, departure_date, departure_time,arrival_date,arrival_time)
 			values (@id_flight, @id_airplane, @id_origin_airport, @id_destination_airport, cast('2025-12-02' as date), cast('8:15' as time), cast('2025-12-02' as date), cast('9:20' as time));
 
-		select f.iata_flight_code, a.model, fs.*
+		select f.iata_flight_code, a.model,orig.iata_airport_code,dest.iata_airport_code ,fs.*
 		from flight_schedules fs
 		inner join flights f on fs.id_flight = f.id
 		inner join airplanes a on fs.id_airplane = a.id
+		inner join airports orig on fs.id_origin_airport = orig.id
+		inner join airports dest on fs.id_destination_airport = dest.id
 
-		select * from airports		
 
 		--21. airplane_seats
 		--Configurazioni ITA Airways
@@ -1388,20 +1387,162 @@ begin try
 		inner join airplanes p on s.id_airplane = p.id
 		inner join fare_type_families f on s.id_fare_type_family = f.id;
 		
-		end
 
 		--22. Tabella flight_schedule_base_prices
+		--AZ2010 FCO-LIN  7:00-8:10 AZ2010 AIRBUS A319 Business/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ2010','2025-11-24','ECOL',57.84;
+		exec sp_add_flight_schedule_base_prices 'AZ2010','2025-11-24','ECOC',94.84;
+		exec sp_add_flight_schedule_base_prices 'AZ2010','2025-11-24','ECOF',112.84;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ2010','2025-11-24','BUSC',202.84;
+		exec sp_add_flight_schedule_base_prices 'AZ2010','2025-11-24','BUSF',213.84;
+
+		--AZ1263 + AZ1288 FCO-NAP-LIN AZ1263 + AZ1288 AIRBUS A220-100 + AIRBUS A319 Business/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ1263','2025-11-24','ECOL',73.84;
+		exec sp_add_flight_schedule_base_prices 'AZ1263','2025-11-24','ECOC',116.84;
+		exec sp_add_flight_schedule_base_prices 'AZ1263','2025-11-24','ECOF',134.84;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ1263','2025-11-24','BUSC',136.84;
+		exec sp_add_flight_schedule_base_prices 'AZ1263','2025-11-24','BUSF',156.84;
+
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ1288','2025-11-24','ECOL',49.82;
+		exec sp_add_flight_schedule_base_prices 'AZ1288','2025-11-24','ECOC',86.82;
+		exec sp_add_flight_schedule_base_prices 'AZ1288','2025-11-24','ECOF',104.82;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ1288','2025-11-24','BUSC',298.82;
+		exec sp_add_flight_schedule_base_prices 'AZ1288','2025-11-24','BUSF',318.82;
+
+		--AZ1359 FCO-TRS 17:20-18:30; AZ1359; AIRBUS A220-300Business/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ1359','2025-11-24','ECOL',55.84;
+		exec sp_add_flight_schedule_base_prices 'AZ1359','2025-11-24','ECOC',98.84;
+		exec sp_add_flight_schedule_base_prices 'AZ1359','2025-11-24','ECOF',116.84;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ1359','2025-11-24','BUSC',140.84;
+		exec sp_add_flight_schedule_base_prices 'AZ1359','2025-11-24','BUSF',160.84;
+
+		--AZ630 FCO-MIA Andata 10:35-16:00  AIRBUS A330-900NEO Business/Premium/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','ECOL',285.90;
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','ECOC',340.90;
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','ECOCP',385.90;
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','ECOF',516.90;
+		--Premium
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','PREC',860.90;
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','PREF',986.90;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','BUSC',1405.40;
+		exec sp_add_flight_schedule_base_prices 'AZ630','2025-11-24','BUSF',2801.40;
+
+		--AZ631 MIA-FCO Ritorno 19:30-11:40 (+1 giorno) AZ631 AIRBUS A330-900NEO Business/Premium/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','ECOL',294.70;
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','ECOC',339.70;
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','ECOCP',379.70;
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','ECOF',470.70;
+		--Premium
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','PREC',814.70;
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','PREF',940.70;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','BUSC',1359.20;
+		exec sp_add_flight_schedule_base_prices 'AZ631','2025-12-01','BUSF',2755.20;
+	
+		--AZ316 FCO-CGD  8:35-10:45  AIRBUS A321NEO Business/Premium/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ316','2025-11-24','ECOL',120.67;
+		exec sp_add_flight_schedule_base_prices 'AZ316','2025-11-24','ECOC',157.67;
+		exec sp_add_flight_schedule_base_prices 'AZ316','2025-11-24','ECOF',180.67;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ316','2025-11-24','BUSC',164.67;
+		exec sp_add_flight_schedule_base_prices 'AZ316','2025-11-24','BUSF',392.67;
+		--AF0474 CDG -PTY (Panama)  13:55-17:45  AIRBUS A350-900 Business/Premium/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','ECOL',395.00;
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','ECOS',450.00;
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','ECOSP',473.00;
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','ECOF',525.00;
+		--Premium
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','PRES',707.00;
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','PREF',817.00;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','BUSS',2595.00;
+		exec sp_add_flight_schedule_base_prices 'AF0474','2025-11-24','BUSF',2820.00;
+		--AF0475 PTY-CGD 19:55-13:15 (+1 giorno) -  - AIRBUS A350-900 Business/Premium/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','ECOL',450.00;
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','ECOS',500.00;
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','ECOSP',569.00;
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','ECOF',592.00;
+		--Premium
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','PRES',715.00;
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','PREF',825.00;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','BUSS',1420.00;
+		exec sp_add_flight_schedule_base_prices 'AF0475','2025-12-01','BUSF',1795.00;
+		--AZ333 CGD-FCO 14:05-16:10 -  - AIRBUS A220-300 Business/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ333','2025-12-02','ECOL',110.67;
+		exec sp_add_flight_schedule_base_prices 'AZ333','2025-12-02','ECOC',147.67;
+		exec sp_add_flight_schedule_base_prices 'AZ333','2025-12-02','ECOF',170.67;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ333','2025-12-02','BUSC',174.67;
+		exec sp_add_flight_schedule_base_prices 'AZ333','2025-12-02','BUSF',399.67;
 
 
-		/*eliminare
-		select * from fare_types where id_airline = 1;
+		--AZ1774 - PMO (Palermo) - FCO 7:20-8:30 -  AIRBUS A320 Business/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ1774','2025-11-24','ECOL',61.44;
+		exec sp_add_flight_schedule_base_prices 'AZ1774','2025-11-24','ECOC',98.444
+		exec sp_add_flight_schedule_base_prices 'AZ1774','2025-11-24','ECOF',116.44;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ1774','2025-11-24','BUSC',118.44;
+		exec sp_add_flight_schedule_base_prices 'AZ1774','2025-11-24','BUSF',138.44;
+		--AZ614 - FCO - BOS 10:25-13:40 -  AIRBUS A330-200 Business/Premium/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','ECOL',314.90;
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','ECOC',369.90;
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','ECOCP',414.90;
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','ECOF',521.90;
+		--Premium
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','PREC',840.90;
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','PREF',966.90;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','BUSC',1455.40;
+		exec sp_add_flight_schedule_base_prices 'AZ614','2025-11-24','BUSF',2926.40;
+		--AZ615 - BOS-FCO 17:05-07:05 (+1 giorno) -  AIRBUS A330-200 Business/Premium/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','ECOL',348.70;
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','ECOC',333.70;
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','ECOCP',459.70;
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','ECOF',500.70;
+		--Premium
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','PREC',819.70;
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','PREF',945.70;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','BUSC',1409.20;
+		exec sp_add_flight_schedule_base_prices 'AZ615','2025-12-01','BUSF',2980.20;
+		--AZ1777 - FCO-PMO 8:15-9:20  AIRBUS A320NEO Business/Economy
+		--Economy
+		exec sp_add_flight_schedule_base_prices 'AZ1777','2025-12-02','ECOL',143.20;
+		exec sp_add_flight_schedule_base_prices 'AZ1777','2025-12-02','ECOF',161.20;
+		--Business
+		exec sp_add_flight_schedule_base_prices 'AZ1777','2025-12-02','BUSC',163.20;
+		exec sp_add_flight_schedule_base_prices 'AZ1777','2025-12-02','BUSF',183.20;
+		
 
-		select f.iata_flight_code, a.model, fs.*
-		from flight_schedules fs
-		inner join flights f on fs.id_flight = f.id
-		inner join airplanes a on fs.id_airplane = a.id;
-		*/
+		select v.iata_flight_code, a.iata_airport_code,f.fare_name,p.*
+		from flight_schedule_base_prices p
+		inner join flight_schedules s on p.id_flight_schedule = s.id
+		inner join airports a on s.id_origin_airport = a.id
+		inner join flights v on s.id_origin_airport = v.id
+		inner join fare_types f on p.id_fare_type = f.id
 
+		end
+
+		--23.
 		
 
 
