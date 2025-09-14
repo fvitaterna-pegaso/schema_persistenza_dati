@@ -23,15 +23,17 @@ declare @id_fare_family tinyint;
 declare @id_flight smallint;
 declare @id_airplane int;
 
+declare @j int;
+
 declare @run_entire_script bit;
 
-set @run_entire_script = 0;
+set @run_entire_script = 1;
 
 begin try
 
 	begin transaction
 
-		if @run_entire_script = 1
+		if @run_entire_script = 0
 		begin
 		--1. Tabella sex_types
 		insert into sex_types (cod,sex_type_name)
@@ -917,11 +919,11 @@ begin try
 		insert into airplanes (model) values ('AIRBUS A321');
 		insert into airplanes (model) values ('AIRBUS A220-300');
 		insert into airplanes (model) values ('AIRBUS A220-100');
-		insert into airplanes (model) values ('AIRBUS A220 PASSENGER');
-		insert into airplanes (model) values ('AIRBUS A330-900NEO PASSENGER');
+		--insert into airplanes (model) values ('AIRBUS A220 PASSENGER'); --> A220-300
+		insert into airplanes (model) values ('AIRBUS A330-900NEO');
 		insert into airplanes (model) values ('AIRBUS A321NEO');
 		insert into airplanes (model) values ('AIRBUS A350-900');
-		insert into airplanes (model) values ('AIRBUS A330');
+		insert into airplanes (model) values ('AIRBUS A330-200');
 		insert into airplanes (model) values ('AIRBUS A320NEO');
 		insert into airplanes (model) values ('BOEING 777');
 		select * from airplanes;
@@ -1070,22 +1072,22 @@ begin try
 			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('20:00' as time), cast('2025-11-24' as date), cast('20:55' as time));
 
 		--Solo andata 2 persone
-		--FCO-TRS 17:20-18:30; AZ1359; AIRBUS A220 PASSENGER
+		--FCO-TRS 17:20-18:30; AZ1359; AIRBUS A220-300
 		select @id_flight = id from flights where iata_flight_code = 'AZ1359';
-		select @id_airplane = id from airplanes where model = 'AIRBUS A220 PASSENGER';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A220-300';
 		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
 			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('17:30' as time), cast('2025-11-24' as date), cast('18:30' as time));
 
 
 		--Andata/Ritorno 1 persona FCO-MIA
-		--Andata 10:35-16:00 AZ630 AIRBUS A330-900NEO PASSENGER
+		--Andata 10:35-16:00 AZ630 AIRBUS A330-900NEO
 		select @id_flight = id from flights where iata_flight_code = 'AZ630';
-		select @id_airplane = id from airplanes where model = 'AIRBUS A330-900NEO PASSENGER';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-900NEO';
 		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
 			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('10:35' as time), cast('2025-11-24' as date), cast('16:00' as time));
-		--Ritorno 19:30-11:40 (+1 giorno) AZ631 AIRBUS A330-900NEO PASSENGER
+		--Ritorno 19:30-11:40 (+1 giorno) AZ631 AIRBUS A330-900NEO
 		select @id_flight = id from flights where iata_flight_code = 'AZ631';
-		select @id_airplane = id from airplanes where model = 'AIRBUS A330-900NEO PASSENGER';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-900NEO';
 		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
 			values (@id_flight, @id_airplane, cast('2025-12-01' as date), cast('19:30' as time), cast('2025-12-02' as date), cast('11:40' as time));
 
@@ -1122,15 +1124,15 @@ begin try
 		select @id_airplane = id from airplanes where model = 'AIRBUS A320';
 		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
 			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('7:20' as time), cast('2025-11-24' as date), cast('8:30' as time));
-		--FCO - BOS 10:25-13:40 - AZ614 - AIRBUS A330
+		--FCO - BOS 10:25-13:40 - AZ614 - AIRBUS A330-200
 		select @id_flight = id from flights where iata_flight_code = 'AZ614';
-		select @id_airplane = id from airplanes where model = 'AIRBUS A330';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-200';
 		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
 			values (@id_flight, @id_airplane, cast('2025-11-24' as date), cast('10:25' as time), cast('2025-11-24' as date), cast('13:40' as time));
 		--Ritorno
-		--BOS-FCO 17:05-07:05 (+1 giorno) - AZ615 - AIRBUS A330
+		--BOS-FCO 17:05-07:05 (+1 giorno) - AZ615 - AIRBUS A330-200
 		select @id_flight = id from flights where iata_flight_code = 'AZ615';
-		select @id_airplane = id from airplanes where model = 'AIRBUS A330';
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-200';
 		insert into flight_schedules (id_flight,id_airplane, departure_date, departure_time,arrival_date,arrival_time)
 			values (@id_flight, @id_airplane, cast('2025-12-01' as date), cast('17:05' as time), cast('2025-12-02' as date), cast('07:05' as time));
 		--FCO-PMO 8:15-9:20 AZ1777 AIRBUS A320NEO
@@ -1144,27 +1146,221 @@ begin try
 		inner join flights f on fs.id_flight = f.id
 		inner join airplanes a on fs.id_airplane = a.id;
 
-		end
+
 
 		--21. airplane_seats
+		--Configurazioni ITA Airways
+		select @id_airline = id from airlines where iata_airline_code = 'AZ';
+
 		--AIRBUS A319
+		/*
+		• https://www.aerolopa.com/az-319
+		• Business: 2-8 AC DF (8 file per 4 posti: 32 posti totali)
+		• Economy: 9-25 abc def (17 file per 6 posti: 102 posti totali)
+		• Posti totali a disposizione: 134
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A319';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,2,8,'A,C,D,F';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,9,25,'A,B,C,D,E,F';
+		
 		--AIRBUS A220-100 
-		--AIRBUS A220 PASSENGER
-		--AIRBUS A330-900NEO PASSENGER
+		/*
+		• https://www.aerolopa.com/az-221
+		• Business 1-6 AC DF (6 file per 4 posti: 24 totali)
+		• Economy 7-27 AC DEF (21 file per 5 posti: 105 totali)
+		• Posti totali a disposizione: 129
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A220-100';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,6,'A,C,D,F';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,7,27,'A,C,D,E,F';
+
+		--AIRBUS A330-900NEO
+		/*
+		• https://www.aerolopa.com/az-359-3cl
+		• Business
+			§ 1 AD H (1 fila per 3 posti: 3)
+			§ 2-8 AD HL (7 file per 4 posti: 28)
+		• Premium
+			§ 20-22 AC DEGH JL (3 file per 8 posti: 24)
+		• Economy
+			§ 30-43 ABC DEH JKL (14 file per 9 posti: 126) 
+			§ 44 AC DEH JL (7)
+			§ 45-58 ABC DEH JKL (14 file per 9 posti: 126)
+			§ 59 DEH (3)
+		• Posti totali a disposizione:  317
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-900NEO';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,1,'A,D,H';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,2,8,'A,D,H,L';
+		--Premium
+		select @id_fare_family = id from fare_type_families where family_code = 'P';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,20,22,'A,C,D,E,G,H,J,L';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,30,43,'A,B,C,D,E,H,J,K,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,44,44,'A,C,D,E,H,J,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,45,58,'A,B,C,D,E,H,J,K,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,59,59,'D,E,H';
+
+
 		--AIRBUS A321NEO
-		--AIRBUS A350-900 (AF)
+		/*
+		• https://www.aerolopa.com/az-32q
+		• Business
+			§ 1-6 AF 6 - file per 2 posti: 12
+		• Premium
+			§ 20-22 AC DE - 3 file per 4 posti: 12
+		• Economy
+			§ 30-52 ABC DEF - 23 file per 4 posti: 92
+			§ 53 DEF - 1 file per 3 posti: 3
+		• Posti totali a disposizione
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A321NEO';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,6,'A,F';
+		--Premium
+		select @id_fare_family = id from fare_type_families where family_code = 'P';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,20,22,'A,C,D,E';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,30,52,'A,B,C,D,E,F';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,53,53,'D,E,F';
+					
 		--AIRBUS A220-300
+		/*
+		• https://www.aerolopa.com/az-223
+		• Business: 1-4 A DF (4 file per 3 posti: 12 totali)
+		• Economy 
+			§ 5-30 AC DEF (26 file per 5 posti: 130)
+			§ 31 DEF (1 file per 3 posti): 3
+		• Posti totali a disposizione: 145
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A220-300';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,4,'A,D,F';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,5,30,'A,C,D,E,F';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,5,31,'D,E,F';
+
 		--AIRBUS A320
-		--AIRBUS A330
+		/*
+		• https://www.aerolopa.com/az-320-2
+		• Business 1-9 AC DF - 9 file per 4 posti: 36
+		• Economy 10-32 ABC DEF -23 file per 6 posti:  138
+		• Posti totali a disposizione: 174 
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A320';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,9,'A,C,D,F';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,10,32,'A,B,C,D,E,F';
+		
+		--AIRBUS A330-200
+		/*
+		• https://www.aerolopa.com/az-332
+		• Business: 20 posti
+			§ 1.3.5 C EG J - 3 file per 4 posti: 12
+			§ 2.4 A DH L - 2 file per 4 posti: 8
+		• Premium: 17 posti
+			§ 8-9 AC DEG JL -  2file per 7 posti: 14
+			§ 10 DEG: 1 file per 3 posti: 3
+		• Economy: 209 posti
+			§ 12 AC JL - 1 fila per 4 posti: 4
+			§ 15-16.18-27 AC DEGH JL 12 file per 8 posti: 96
+			§ 28 DEGH - 1 file per 4 posti: 4
+			§ 29-38 AC DEGH JL 10 file per 8 posti: 80
+			§ 39-41 AC DEG JL 3 file per 7 posti: 21
+			§ 42 AC JL: 1 fila per 4 posti: 4
+		• Posti totali a disposizione: 246
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A330-200';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,1,'C,E,G,J';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,2,2,'A,D,H,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,3,3,'C,E,G,J';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,4,4,'A,D,H,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,5,5,'C,E,G,J';
+		--Premium
+		select @id_fare_family = id from fare_type_families where family_code = 'P';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,8,9,'A,C,D,E,G,J,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,10,10,'D,E,G';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,12,12,'A,C,J,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,15,16,'A,C,D,E,G,H,J,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,18,27,'A,C,D,E,G,H,J,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,28,28,'D,E,G,H';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,29,38,'A,C,D,E,G,H,J,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,39,41,'A,C,D,E,G,J,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,42,42,'J,L';
+
 		--AIRBUS A320NEO
+		/*
+		• https://www.aerolopa.com/az-32n-2
+		• Business 1-9 AC DF - 9 file per 4 posti: 36
+		• Economy 10-32 ABC DEF -23 file per 6 posti:  138
+		• Posti totali a disposizione: 174 
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A320NEO';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,9,'A,C,D,F';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,10,32,'A,B,C,D,E,F';
 
 
+		--Configurazioni Air France
+		select @id_airline = id from airlines where iata_airline_code = 'AF';
+		--AIRBUS A350-900 (AF)
+		/*
+		• https://www.aerolopa.com/af-359-2
+		• Business: 1-8.10-12.14 A D H L: 12 file per 4 posti: 48
+		• Premium: 15-18 AB DEGH KL - 4 file per 8 posti: 32
+		• Economy: 212 posti
+			§ 21-28.30-44 ABC DEH JKL 23 file per 9 posti: 207
+			§ 45 AB DEH: 1 fila per 5 posti: 5
+		• Posti totali a disposizione: 292
+		*/
+		select @id_airplane = id from airplanes where model = 'AIRBUS A350-900';
+		--Business
+		select @id_fare_family = id from fare_type_families where family_code = 'B';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,1,8,'A,D,H,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,10,12,'A,D,H,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane, @id_fare_family,14,14,'A,D,H,L';
+		--Premium
+		select @id_fare_family = id from fare_type_families where family_code = 'P';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,15,18,'A,B,D,E,G,H,K,L';
+		--Economy
+		select @id_fare_family = id from fare_type_families where family_code = 'E';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,21,28,'A,B,C,D,E,H,J,K,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,30,44,'A,B,C,D,E,H,J,K,L';
+		exec sp_add_seats_configuration @id_airline,@id_airplane ,@id_fare_family,45,45,'A,B,D,E,H';
 
 
-
-
-
-
+		select l.airline_name,p.model,f.family_name,s.*
+		from airplane_seats s
+		inner join airlines l on s.id_airline = l.id
+		inner join airplanes p on s.id_airplane = p.id
+		inner join fare_type_families f on s.id_fare_type_family = f.id;
+		
+		end
 
 
 	commit transaction

@@ -812,3 +812,50 @@ GO
 ALTER TABLE [airplane_seats] ADD CONSTRAINT [fare_type_family_to_airplane_seats] FOREIGN KEY ([id_fare_type_family]) REFERENCES [fare_type_families] ([id])
 GO
 
+/***************CRAZIONE OGGETTI DI PROGRAMMAZIONE (SP, ETC)************************/
+
+if exists(select * from sys.procedures where name = 'sp_add_seats_configuration')
+	drop procedure sp_add_seats_configuration;
+
+go
+
+
+create procedure sp_add_seats_configuration
+	@id_airline smallint,
+	@id_airplane int,
+	@id_fare_family tinyint,
+	@start_row tinyint,
+	@end_row tinyint,
+	@rows_array varchar(50)
+as
+begin
+	declare @rows table(
+		row char(1)
+	);
+
+	declare cur_rows cursor for select row from @rows;
+	declare @actual_row char(1);
+	
+	insert into @rows
+	select value from string_split(@rows_array,',');
+
+	while @start_row <= @end_row
+	begin
+		open cur_rows;
+		fetch next from cur_rows into @actual_row;
+		while @@FETCH_STATUS = 0
+			begin
+				insert into airplane_seats (id_airplane,id_airline,id_fare_type_family, seat) values (@id_airplane, @id_airline, @id_fare_family, CONCAT(CAST(@start_row as varchar(2)),@actual_row));
+				--select CONCAT(CAST(@start_row as varchar(2)),@actual_row);
+				fetch next from cur_rows into @actual_row;
+			end
+		close cur_rows;
+		set @start_row = @start_row + 1
+	end
+
+
+	deallocate cur_rows;
+
+end
+
+go
