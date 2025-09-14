@@ -25,6 +25,17 @@ declare @id_airplane int;
 declare @id_origin_airport smallint
 declare @id_destination_airport smallint
 declare @id_flight_schedule bigint;
+declare @id_reservation_system tinyint;
+declare @id_payment_method tinyint;
+declare @id_reservation_status tinyint;
+declare @id_reservation bigint;
+declare @id_journey bigint;
+declare @id_passeggero bigint;
+declare @user_id uniqueidentifier;
+declare @id_doc_type tinyint;
+declare @departure_date date = CAST('2025-11-24' as date);
+declare @id_price_component tinyint;
+
 
 declare @run_entire_script bit;
 
@@ -1545,8 +1556,6 @@ begin try
 		insert into reservations_statuses (cod,status_name, status_description) values ('PRG','IN_PROGRESS','Prenotazione in corso');
 		insert into reservations_statuses (cod,status_name, status_description) values ('CRT','CREATED','Prenotazione creata');
 		insert into reservations_statuses (cod,status_name, status_description) values ('BHT','BOUGHT','Biglietti acquistati');
-		insert into reservations_statuses (cod,status_name, status_description) values ('CKA','AVAIL_CHECK_IN','Check-In Disponibile');
-		insert into reservations_statuses (cod,status_name, status_description) values ('CKD','CHECK_IN_DONE','Check-In Effettuato');
 		insert into reservations_statuses (cod,status_name, status_description) values ('OGN','ON_GOING','Viaggio in corso');
 		insert into reservations_statuses (cod,status_name, status_description) values ('END','FINISHED','Viaggio terminato');
 		insert into reservations_statuses (cod,status_name, status_description) values ('CAN','CANCELED','Prenotazione non attiva o cancellata');
@@ -1554,6 +1563,168 @@ begin try
 		select * from reservations_statuses;
 
 		end
+		--select * from fare_types where id_airline = 1
+		--select * from payment_methods
+		--select * from users
+		--select * from identity_document_types
+		/*****PRENOTAZIONI***********/
+
+
+		select @id_reservation_system = id from reservation_systems where reservation_system_code = 'ITA';
+		----1. Sola andata 1 persona - FCO-LIN  7:00-8:10 AZ2010 AIRBUS A319 Business/Economy
+		----STATO: venduto
+		----Traiffa Business Flex
+		---- tabella reservations
+		select @id_origin_airport = id from airports where iata_airport_code = 'FCO';
+		select @id_destination_airport = id from airports where iata_airport_code = 'LIN';
+		select @id_fare_type = id  from fare_types where fare_code = 'BUSF' and id_airline = 1;
+		select @id_payment_method= id  from payment_methods where cod = 'CC';
+		select @id_reservation_status = id from reservations_statuses where cod = 'BHT';
+		
+		insert into reservations
+		(
+			pnr_code,
+			id_reservation_system,
+			id_origin_airport,
+			id_destination_airport,
+			departure_date,
+			return_date,
+			id_fare_type,
+			total_price,
+			discount,
+			id_payment_method,
+			check_in,
+			checked_in,
+			owner_conditions_acceptance,
+			id_reservations_status
+		) 
+		values
+		(
+			'X7Y9ZQ',--pnr_code,
+			@id_reservation_system,--id_reservation_system,
+			@id_origin_airport,--id_origin_airport,
+			@id_destination_airport,--id_destination_airport,
+			CAST('2025-11-24' as date),--departure_date,
+			NULL,--return_date,
+			@id_fare_type,--id_fare_type,
+			213.84,--total_price,
+			5.00,--discount,
+			@id_payment_method,--id_payment_method,
+			0,--check_in,
+			0,--checked_in,
+			1,--owner_conditions_acceptance,
+			@id_reservation_status--id_reservations_status
+		);
+
+		--select * from reservations
+		--select * from airports
+		--select * from fare_types
+
+		set @id_reservation = SCOPE_IDENTITY();
+
+		--tabella journeys
+		select @id_flight_schedule = fs.id, @id_airplane = fs.id_airplane, @id_airline = f.id_airline
+		from flight_schedules fs
+		inner join flights f on fs.id_flight = f.id
+		where f.iata_flight_code = 'AZ2010' and fs.departure_date = @departure_date;
+
+		--select * from journeys
+		
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		set @id_journey = SCOPE_IDENTITY();
+
+		--tabella passengers
+		select @user_id = u.user_id from users u where u.user_name = 'fvitaterna_pegaso';
+		select @id_doc_type = id from identity_document_types where cod = 'ID';
+
+		insert into passengers
+		(
+			id_reservation,
+			reservation_owner,
+			user_id,
+			ticket_number,
+			first_name,
+			last_name,
+			birth_date,
+			email,
+			id_doc_type,
+			id_doc_number,
+			id_doc_expiration_date
+		)
+		values
+		(
+			@id_reservation,--id_reservation,
+			1,--reservation_owner,
+			@user_id,--user_id,
+			'0572300662721',--ticket_number,
+			'Fabio',--first_name,
+			'Vitaterna',--last_name,
+			CAST('1968-09-13' as date),--birth_date,
+			'fabio.vitaterna@studenti.unipegaso.it',--email,
+			@id_doc_type,--id_doc_type,
+			'DB83707MB',--id_doc_number,
+			CAST('2028-09-13' as date)--id_doc_expiration_date
+		);
+
+
+		set @id_passeggero = SCOPE_IDENTITY();
+		
+		--select * from passengers
+
+		--select * from price_components
+		--tabella reservation_component_prices
+		select @id_price_component = id from price_components where price_component_code = 'BASE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,179.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'FUEL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,165.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'BAGGAGE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,2.09);
+
+		select @id_price_component = id from price_components where price_component_code = 'VAT';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,3.17);
+
+		select @id_price_component = id from price_components where price_component_code = 'MUNICIPAL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,7.50);
+
+		select @id_price_component = id from price_components where price_component_code = 'BOARDING';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,17.52);
+
+		select @id_price_component = id from price_components where price_component_code = 'PASS_SERV';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,1.21);
+
+		select @id_price_component = id from price_components where price_component_code = 'SECURITY';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,3.35);
+
+		--Tabella flight_schedule_seats
+		--select * from airplane_seats
+		--select * from telephones
+
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey,
+			@id_passeggero,
+			1, --2A
+			@id_fare_type
+		);
+
+		--select * from flight_schedule_seats
+		insert into reservations_telephones (id_reservation,id_telephone) values (@id_reservation,1);
+
+		--2. Solo andata 1 persona con scali
+		--2a 9:40-10:35  12:00-13:25 FCO-NAP-LIN AZ1263 + AZ1288 AIRBUS A220-100 + AIRBUS A319 Business/Economy
+		--2a STATO:
+
+		--2b 18:00-19:10 - 20:00-20:55  FCO-LIN-TRS AZ2050 + AZ1353  AIRBUS A319 + AIRBUS A220-100 Business/Economy
+		--2b STATO:
+		
 
 	commit transaction
 	print 'Script eseguito con successo';

@@ -613,7 +613,7 @@ GO
 
 
 CREATE TABLE [reservations] (
-  [id] bigint PRIMARY KEY,
+  [id] bigint PRIMARY KEY IDENTITY(1,1),
   [pnr_code] varchar(6) NOT NULL,
   [id_reservation_system] tinyint NOT NULL,
   [id_origin_airport] smallint NOT NULL,
@@ -624,6 +624,8 @@ CREATE TABLE [reservations] (
   [total_price] money,
   [discount] money,
   [id_payment_method] tinyint,
+  [check_in] bit NOT NULL DEFAULT (0),
+  [checked_in] bit NOT NULL DEFAULT (0),
   [owner_conditions_acceptance] bit NOT NULL,
   [id_reservations_status] tinyint NOT NULL
 )
