@@ -246,6 +246,19 @@ if exists(select name from sys.foreign_keys where name = 'fare_type_family_to_ai
 	alter table [airplane_seats] drop constraint [fare_type_family_to_airplane_seats] 
 
 GO
+
+if exists(select name from sys.foreign_keys where name = 'origin_airport_to_flight_schedules')
+		and exists(select * from sys.tables where name = 'flight_schedules')
+	alter table [flight_schedules] drop constraint [origin_airport_to_flight_schedules] 
+
+GO
+
+if exists(select name from sys.foreign_keys where name = 'destination_airport_to_flight_schedules')
+		and exists(select * from sys.tables where name = 'flight_schedules')
+	alter table [flight_schedules] drop constraint [destination_airport_to_flight_schedules] 
+
+GO
+
 /**********CHECK ESISTENZA TABELLE********************/
 
 /****** Object:  Table [dbo].[airlines]    Script Date: 07/09/2025 17:42:22 ******/
@@ -581,6 +594,8 @@ CREATE TABLE [flight_schedules] (
   [id] bigint PRIMARY KEY IDENTITY(1, 1),
   [id_flight] smallint NOT NULL,
   [id_airplane] int NOT NULL,
+  [id_origin_airport] smallint NOT NULL,
+  [id_destination_airport] smallint NOT NULL,
   [departure_date] date NOT NULL,
   [departure_time] time NOT NULL,
   [arrival_date] date NOT NULL,
@@ -812,7 +827,13 @@ GO
 ALTER TABLE [airplane_seats] ADD CONSTRAINT [fare_type_family_to_airplane_seats] FOREIGN KEY ([id_fare_type_family]) REFERENCES [fare_type_families] ([id])
 GO
 
-/***************CRAZIONE OGGETTI DI PROGRAMMAZIONE (SP, ETC)************************/
+ALTER TABLE [flight_schedules] ADD CONSTRAINT [origin_airport_to_flight_schedules] FOREIGN KEY ([id_origin_airport]) REFERENCES [airports] ([id])
+GO
+
+ALTER TABLE [flight_schedules] ADD CONSTRAINT [destination_airport_to_flight_schedules] FOREIGN KEY ([id_destination_airport]) REFERENCES [airports] ([id])
+GO
+
+/***************CREAZIONE OGGETTI DI PROGRAMMAZIONE (SP, ETC)************************/
 
 if exists(select * from sys.procedures where name = 'sp_add_seats_configuration')
 	drop procedure sp_add_seats_configuration;
