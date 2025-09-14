@@ -618,6 +618,7 @@ CREATE TABLE [reservations] (
   [id_reservation_system] tinyint NOT NULL,
   [id_origin_airport] smallint NOT NULL,
   [id_destination_airport] smallint NOT NULL,
+  [round_trip] bit not null,
   [departure_date] date NOT NULL,
   [return_date] date,
   [id_fare_type] int NOT NULL,

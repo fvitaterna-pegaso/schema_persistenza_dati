@@ -29,11 +29,15 @@ declare @id_reservation_system tinyint;
 declare @id_payment_method tinyint;
 declare @id_reservation_status tinyint;
 declare @id_reservation bigint;
-declare @id_journey bigint;
+declare @id_journey1 bigint;
+declare @id_journey2 bigint;
+declare @id_journey3 bigint;
+declare @id_journey4 bigint;
 declare @id_passeggero bigint;
 declare @user_id uniqueidentifier;
 declare @id_doc_type tinyint;
 declare @departure_date date = CAST('2025-11-24' as date);
+declare @return_date date = CAST('2025-12-01' as date);
 declare @id_price_component tinyint;
 
 
@@ -45,6 +49,8 @@ begin try
 
 	begin transaction
 
+		select @id_reservation_system = id from reservation_systems where reservation_system_code = 'ITA';
+		
 		if @run_entire_script = 1
 		begin
 		--1. Tabella sex_types
@@ -956,6 +962,16 @@ begin try
 			from telephone_types
 			where cod = 'M';
 
+		insert into telephones (id_telephone_type,telephone_country_code,telephone_area_code, telephone_number)
+			select id,'+39','351','40712800'
+			from telephone_types
+			where cod = 'M';
+
+		insert into telephones (id_telephone_type,telephone_country_code,telephone_area_code, telephone_number)
+			select id,'+39','091','4882198'
+			from telephone_types
+			where cod = 'H';
+
 		select * from telephones;
 
 		--18. Users
@@ -1562,15 +1578,13 @@ begin try
 
 		select * from reservations_statuses;
 
-		end
 		--select * from fare_types where id_airline = 1
 		--select * from payment_methods
 		--select * from users
 		--select * from identity_document_types
 		/*****PRENOTAZIONI***********/
 
-
-		select @id_reservation_system = id from reservation_systems where reservation_system_code = 'ITA';
+		
 		----1. Sola andata 1 persona - FCO-LIN  7:00-8:10 AZ2010 AIRBUS A319 Business/Economy
 		----STATO: venduto
 		----Traiffa Business Flex
@@ -1587,6 +1601,7 @@ begin try
 			id_reservation_system,
 			id_origin_airport,
 			id_destination_airport,
+			round_trip,
 			departure_date,
 			return_date,
 			id_fare_type,
@@ -1604,6 +1619,7 @@ begin try
 			@id_reservation_system,--id_reservation_system,
 			@id_origin_airport,--id_origin_airport,
 			@id_destination_airport,--id_destination_airport,
+			0,--round_trip
 			CAST('2025-11-24' as date),--departure_date,
 			NULL,--return_date,
 			@id_fare_type,--id_fare_type,
@@ -1631,7 +1647,7 @@ begin try
 		--select * from journeys
 		
 		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
-		set @id_journey = SCOPE_IDENTITY();
+		set @id_journey1 = SCOPE_IDENTITY();
 
 		--tabella passengers
 		select @user_id = u.user_id from users u where u.user_name = 'fvitaterna_pegaso';
@@ -1709,7 +1725,7 @@ begin try
 		)
 		values
 		(
-			@id_journey,
+			@id_journey1,
 			@id_passeggero,
 			1, --2A
 			@id_fare_type
@@ -1718,13 +1734,491 @@ begin try
 		--select * from flight_schedule_seats
 		insert into reservations_telephones (id_reservation,id_telephone) values (@id_reservation,1);
 
-		--2. Solo andata 1 persona con scali
-		--2a 9:40-10:35  12:00-13:25 FCO-NAP-LIN AZ1263 + AZ1288 AIRBUS A220-100 + AIRBUS A319 Business/Economy
-		--2a STATO:
 
-		--2b 18:00-19:10 - 20:00-20:55  FCO-LIN-TRS AZ2050 + AZ1353  AIRBUS A319 + AIRBUS A220-100 Business/Economy
-		--2b STATO:
+		--6. Andata/Ritorno 3 persone, 1 bambino,
+		--a. Andata 
+		--	i. PMO (Palermo) - FCO 7:20-8:30 - AZ1774 - AIRBUS A320 Business/Economy
+		--	ii. FCO - BOS 10:25-13:40 - AZ614 - AIRBUS A330-200 Business/Premium/Economy
+		--b. Ritorno
+		--	i. BOS-FCO 17:05-07:05 (+1 giorno) - AZ615 - AIRBUS A330-200 Business/Premium/Economy
+		--	ii. FCO-PMO 8:15-9:20 AZ1777 AIRBUS A320NEO Business/Economy
 		
+		select @id_origin_airport = id from airports where iata_airport_code = 'PMO';
+		select @id_destination_airport = id from airports where iata_airport_code = 'BOS';
+		select @id_fare_type = id  from fare_types where fare_code = 'BUSF' and id_airline = 1;
+		select @id_payment_method= id  from payment_methods where cod = 'PP';
+		select @id_reservation_status = id from reservations_statuses where cod = 'BHT';
+		
+		insert into reservations
+		(
+			pnr_code,
+			id_reservation_system,
+			id_origin_airport,
+			id_destination_airport,
+			round_trip,
+			departure_date,
+			return_date,
+			id_fare_type,
+			total_price,
+			discount,
+			id_payment_method,
+			check_in,
+			checked_in,
+			owner_conditions_acceptance,
+			id_reservations_status
+		) 
+		values
+		(
+			'Y8Z0AR',--pnr_code,
+			@id_reservation_system,--id_reservation_system,
+			@id_origin_airport,--id_origin_airport,
+			@id_destination_airport,--id_destination_airport,
+			1, --round_trip
+			@departure_date,--departure_date,
+			@return_date,--return_date,
+			@id_fare_type,--id_fare_type,
+			3418.32,--total_price,
+			0.00,--discount,
+			@id_payment_method,--id_payment_method,
+			0,--check_in,
+			0,--checked_in,
+			1,--owner_conditions_acceptance,
+			@id_reservation_status--id_reservations_status
+		);
+
+		--select * from reservations
+		--select * from airports
+		--select * from fare_types
+
+		set @id_reservation = SCOPE_IDENTITY();
+
+		--tabella journeys
+		--PMO->FCO
+		select @id_flight_schedule = fs.id, @id_airplane = fs.id_airplane, @id_airline = f.id_airline
+		from flight_schedules fs
+		inner join flights f on fs.id_flight = f.id
+		where f.iata_flight_code = 'AZ1774' and fs.departure_date = @departure_date;
+
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		set @id_journey1 = SCOPE_IDENTITY();
+
+		--FCO->BOS
+		select @id_flight_schedule = fs.id, @id_airplane = fs.id_airplane, @id_airline = f.id_airline
+		from flight_schedules fs
+		inner join flights f on fs.id_flight = f.id
+		where f.iata_flight_code = 'AZ614' and fs.departure_date = @departure_date;
+
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		set @id_journey2 = SCOPE_IDENTITY();
+
+		--BOS->FCO
+		select @id_flight_schedule = fs.id, @id_airplane = fs.id_airplane, @id_airline = f.id_airline
+		from flight_schedules fs
+		inner join flights f on fs.id_flight = f.id
+		where f.iata_flight_code = 'AZ615' and fs.departure_date = @return_date;
+
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		set @id_journey3 = SCOPE_IDENTITY();
+
+		--FCO->PMO
+		select @id_flight_schedule = fs.id, @id_airplane = fs.id_airplane, @id_airline = f.id_airline
+		from flight_schedules fs
+		inner join flights f on fs.id_flight = f.id
+		where f.iata_flight_code = 'AZ1777' and fs.departure_date = DATEADD(DAY,1,@return_date);
+
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		set @id_journey4 = SCOPE_IDENTITY();
+
+		--select * from journeys
+		--tabella passengers
+		--select @user_id = u.user_id from users u where u.user_name = 'fvitaterna_pegaso';
+		select @id_doc_type = id from identity_document_types where cod = 'PS';
+
+		--passeggero 1 (Adulto)
+		insert into passengers
+		(
+			id_reservation,
+			reservation_owner,
+			user_id,
+			ticket_number,
+			first_name,
+			last_name,
+			birth_date,
+			email,
+			id_doc_type,
+			id_doc_number,
+			id_doc_expiration_date
+		)
+		values
+		(
+			@id_reservation,--id_reservation,
+			1,--reservation_owner,
+			null,--user_id,
+			'073411773832',--ticket_number,
+			'Mario',--first_name,
+			'Rossi',--last_name,
+			CAST('1990-05-10' as date),--birth_date,
+			'mario.rossi@mokmail.com',--email,
+			@id_doc_type,--id_doc_type,
+			'YB4472738',--id_doc_number,
+			CAST('2028-05-10' as date)--id_doc_expiration_date
+		);
+
+
+		set @id_passeggero = SCOPE_IDENTITY();
+		
+		--select * from passengers
+
+		--select * from price_components
+		--tabella reservation_component_prices
+		select @id_price_component = id from price_components where price_component_code = 'BASE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,897.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'FUEL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,210.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'BAGGAGE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,1.15);
+
+		--select @id_price_component = id from price_components where price_component_code = 'VAT';
+		--insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,0.44);
+
+		select @id_price_component = id from price_components where price_component_code = 'MUNICIPAL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,15.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'BOARDING';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,28.36);
+
+		select @id_price_component = id from price_components where price_component_code = 'PASS_SERV';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,3.07);
+
+		select @id_price_component = id from price_components where price_component_code = 'SECURITY';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,63.50);
+
+		--Tabella flight_schedule_seats
+		--select * from airplane_seats
+		--select * from telephones
+		--select * from reservation_component_prices
+
+		--PMO->FCO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey1,
+			@id_passeggero,
+			1002, --10B
+			@id_fare_type
+		);
+
+		--FCO->BOS
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey2,
+			@id_passeggero,
+			1282, --29D
+			@id_fare_type
+		);
+
+		--BOS->FCO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey3,
+			@id_passeggero,
+			1282, --29D
+			@id_fare_type
+		);
+
+		--FCO->PMO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey4,
+			@id_passeggero,
+			1420, --10B
+			@id_fare_type
+		);
+
+		--select * from flight_schedule_seats
+
+		--Passeggero 2 (Adulto)
+		insert into passengers
+		(
+			id_reservation,
+			reservation_owner,
+			user_id,
+			ticket_number,
+			first_name,
+			last_name,
+			birth_date,
+			email,
+			id_doc_type,
+			id_doc_number,
+			id_doc_expiration_date
+		)
+		values
+		(
+			@id_reservation,--id_reservation,
+			0,--reservation_owner,
+			null,--user_id,
+			'073411773833',--ticket_number,
+			'Concetta',--first_name,
+			'Montalbano',--last_name,
+			CAST('1997-11-15' as date),--birth_date,
+			'cetta97@mokmail.com',--email,
+			@id_doc_type,--id_doc_type,
+			'YC5583849',--id_doc_number,
+			CAST('2028-11-15' as date)--id_doc_expiration_date
+		);
+
+
+		set @id_passeggero = SCOPE_IDENTITY();
+		
+		--select * from passengers
+
+		--select * from price_components
+		--tabella reservation_component_prices
+		select @id_price_component = id from price_components where price_component_code = 'BASE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,897.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'FUEL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,210.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'BAGGAGE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,1.15);
+
+		--select @id_price_component = id from price_components where price_component_code = 'VAT';
+		--insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,0.44);
+
+		select @id_price_component = id from price_components where price_component_code = 'MUNICIPAL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,15.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'BOARDING';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,28.36);
+
+		select @id_price_component = id from price_components where price_component_code = 'PASS_SERV';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,3.07);
+
+		select @id_price_component = id from price_components where price_component_code = 'SECURITY';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,63.50);
+
+		--Tabella flight_schedule_seats
+		--select * from airplane_seats
+		--select * from telephones
+
+		--PMO->FCO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey1,
+			@id_passeggero,
+			1003, --10C
+			@id_fare_type
+		);
+
+		--FCO->BOS
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey2,
+			@id_passeggero,
+			1284, --29G
+			@id_fare_type
+		);
+
+		--BOS->FCO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey3,
+			@id_passeggero,
+			1284, --29G
+			@id_fare_type
+		);
+
+		--FCO->PMO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey4,
+			@id_passeggero,
+			1421, --10C
+			@id_fare_type
+		);
+
+
+		--Passeggero 3 (Bambino)
+		insert into passengers
+		(
+			id_reservation,
+			reservation_owner,
+			user_id,
+			ticket_number,
+			first_name,
+			last_name,
+			birth_date,
+			email,
+			id_doc_type,
+			id_doc_number,
+			id_doc_expiration_date
+		)
+		values
+		(
+			@id_reservation,--id_reservation,
+			0,--reservation_owner,
+			null,--user_id,
+			'073411773834',--ticket_number,
+			'Paolo',--first_name,
+			'Rossi',--last_name,
+			CAST('2020-01-31' as date),--birth_date,
+			'mario.rossi@mokmail.com',--email,
+			@id_doc_type,--id_doc_type,
+			'YC6683850',--id_doc_number,
+			CAST('2026-01-31' as date)--id_doc_expiration_date
+		);
+
+
+		set @id_passeggero = SCOPE_IDENTITY();
+		
+		--select * from passengers
+
+		--select * from price_components
+		--tabella reservation_component_prices
+		select @id_price_component = id from price_components where price_component_code = 'BASE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,673.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'FUEL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,210.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'BAGGAGE';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,1.15);
+
+		--select @id_price_component = id from price_components where price_component_code = 'VAT';
+		--insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,0.44);
+
+		select @id_price_component = id from price_components where price_component_code = 'MUNICIPAL';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,15.00);
+
+		select @id_price_component = id from price_components where price_component_code = 'BOARDING';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,16.44);
+
+		select @id_price_component = id from price_components where price_component_code = 'PASS_SERV';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,3.07);
+
+		select @id_price_component = id from price_components where price_component_code = 'SECURITY';
+		insert into reservation_component_prices (id_passenger, id_price_conponent, price) values(@id_passeggero, @id_price_component,63.50);
+
+		--Tabella flight_schedule_seats
+		--select * from airplane_seats
+		--select * from telephones
+
+		--PMO->FCO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey1,
+			@id_passeggero,
+			1001, --10A
+			@id_fare_type
+		);
+
+		--FCO->BOS
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey2,
+			@id_passeggero,
+			1283, --29E
+			@id_fare_type
+		);
+
+		--BOS->FCO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey3,
+			@id_passeggero,
+			1283, --29E
+			@id_fare_type
+		);
+
+		--FCO->PMO
+		insert into flight_schedule_seats(
+			id_journey,
+			id_passenger,
+			id_seat,
+			id_fare_type
+		)
+		values
+		(
+			@id_journey4,
+			@id_passeggero,
+			1419, --10A
+			@id_fare_type
+		);
+
+
+		--select * from flight_schedule_seats
+		insert into reservations_telephones (id_reservation,id_telephone) values (@id_reservation,2);
+		insert into reservations_telephones (id_reservation,id_telephone) values (@id_reservation,3);
+		--select * from reservations_telephones
+		end
 
 	commit transaction
 	print 'Script eseguito con successo';
