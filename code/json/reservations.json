@@ -69,4 +69,7 @@
             "id_reservations_status": 3,
             "reservation_status_cod": "BHT",
             "status_name": "BOUGHT",
-            "status_description": "Bigl
+            "status_description": "Biglietti acquistati"
+		}
+	]
+}
