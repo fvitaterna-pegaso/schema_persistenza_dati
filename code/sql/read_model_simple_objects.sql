@@ -1,7 +1,7 @@
 /**********
-Nome Script		read_model.sql
+Nome Script		read_model_simple_objects.sql
 Autore			Fabio Vitaterna
-Descrizione		Query e Oggetti per use case di esempio per un read model semplice basato su SQL
+Descrizione		Set di query e oggetti per alcuni use case di esempio di un read model semplice basato su SQL
 Note			
 **********/
 
