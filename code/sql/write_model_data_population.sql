@@ -1664,8 +1664,8 @@ begin try
 			birth_date,
 			email,
 			id_doc_type,
-			id_doc_number,
-			id_doc_expiration_date
+			doc_number,
+			doc_expiration_date
 		)
 		values
 		(
@@ -1678,8 +1678,8 @@ begin try
 			CAST('1968-09-13' as date),--birth_date,
 			'fabio.vitaterna@studenti.unipegaso.it',--email,
 			@id_doc_type,--id_doc_type,
-			'DB83707MB',--id_doc_number,
-			CAST('2028-09-13' as date)--id_doc_expiration_date
+			'DB83707MB',--doc_number,
+			CAST('2028-09-13' as date)--doc_expiration_date
 		);
 
 
@@ -1847,8 +1847,8 @@ begin try
 			birth_date,
 			email,
 			id_doc_type,
-			id_doc_number,
-			id_doc_expiration_date
+			doc_number,
+			doc_expiration_date
 		)
 		values
 		(
@@ -1861,8 +1861,8 @@ begin try
 			CAST('1990-05-10' as date),--birth_date,
 			'mario.rossi@mokmail.com',--email,
 			@id_doc_type,--id_doc_type,
-			'YB4472738',--id_doc_number,
-			CAST('2028-05-10' as date)--id_doc_expiration_date
+			'YB4472738',--doc_number,
+			CAST('2028-05-10' as date)--doc_expiration_date
 		);
 
 
@@ -1975,8 +1975,8 @@ begin try
 			birth_date,
 			email,
 			id_doc_type,
-			id_doc_number,
-			id_doc_expiration_date
+			doc_number,
+			doc_expiration_date
 		)
 		values
 		(
@@ -1989,8 +1989,8 @@ begin try
 			CAST('1997-11-15' as date),--birth_date,
 			'cetta97@mokmail.com',--email,
 			@id_doc_type,--id_doc_type,
-			'YC5583849',--id_doc_number,
-			CAST('2028-11-15' as date)--id_doc_expiration_date
+			'YC5583849',--doc_number,
+			CAST('2028-11-15' as date)--doc_expiration_date
 		);
 
 
@@ -2101,8 +2101,8 @@ begin try
 			birth_date,
 			email,
 			id_doc_type,
-			id_doc_number,
-			id_doc_expiration_date
+			doc_number,
+			doc_expiration_date
 		)
 		values
 		(
@@ -2115,8 +2115,8 @@ begin try
 			CAST('2020-01-31' as date),--birth_date,
 			'mario.rossi@mokmail.com',--email,
 			@id_doc_type,--id_doc_type,
-			'YC6683850',--id_doc_number,
-			CAST('2026-01-31' as date)--id_doc_expiration_date
+			'YC6683850',--doc_number,
+			CAST('2026-01-31' as date)--doc_expiration_date
 		);
 
 

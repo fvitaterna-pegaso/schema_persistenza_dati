@@ -651,8 +651,8 @@ CREATE TABLE [passengers] (
   [birth_date] date NOT NULL,
   [email] varchar(100),
   [id_doc_type] tinyint NOT NULL,
-  [id_doc_number] varchar(50) NOT NULL,
-  [id_doc_expiration_date] date NOT NULL
+  [doc_number] varchar(50) NOT NULL,
+  [doc_expiration_date] date NOT NULL
 )
 GO
 
