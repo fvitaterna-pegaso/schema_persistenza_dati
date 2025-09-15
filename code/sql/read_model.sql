@@ -14,8 +14,7 @@ use db_abdf0e_fvitapegaso
 go
 
 --Header Prenotazione
---select * from reservations
-
+--QUERY
 --select	r.id,
 --		r.pnr_code,
 --		r.id_reservation_system,
@@ -74,7 +73,7 @@ go
 --inner join reservations_statuses rStat on r.id_reservations_status = rStat.id
 
 --Tratte della prenotazione
---select * from flight_schedules
+--QUERY
 
 --select	j.id_journey
 --		, j.id_reservation
@@ -106,29 +105,43 @@ go
 --order by j.id_reservation,j.flight_segment_number
 
 --Passeggeri
---select * from users
+--QUERY
 
-select	p.id
+--select	p.id
+--		, p.id_reservation
+--		, r.pnr_code
+--		, rStat.status_description as reservation_status
+--		, p.ticket_number
+--		, p.first_name
+--		, p.last_name
+--		, p.birth_date
+--		, p.email
+--		, idt.type_name as id_type
+--		, p.doc_number as id_number
+--		, p.doc_expiration_date as id_expiration_date
+--		, u.frequent_flyer_code
+--		, u.frequent_flyer_exp_date
+--		, u.frequent_flyer_point_balance
+--from passengers p
+--inner join reservations r on p.id_reservation = r.id
+--inner join reservations_statuses rStat on r.id_reservations_status = rStat.id
+--inner join identity_document_types idt on p.id_doc_type = idt.id
+--left join users u on p.user_id = u.user_id
+
+--Componenti prezzo per passeggero e per prenotazione
+--select * from reservation_component_prices
+
+select	comp.id_passenger
 		, p.id_reservation
+		, comp.id_price_conponent
 		, r.pnr_code
-		, rStat.status_description as reservation_status
-		, p.ticket_number
 		, p.first_name
 		, p.last_name
-		, p.birth_date
-		, p.email
-		, idt.type_name as id_type
-		, p.doc_number as id_number
-		, p.doc_expiration_date as id_expiration_date
-		, u.frequent_flyer_code
-		, u.frequent_flyer_exp_date
-		, u.frequent_flyer_point_balance
-from passengers p
+		, compType.price_component_code
+		, compType.price_component_name
+		, comp.price
+from reservation_component_prices comp
+inner join passengers p on comp.id_passenger = p.id
 inner join reservations r on p.id_reservation = r.id
-inner join reservations_statuses rStat on r.id_reservations_status = rStat.id
-inner join identity_document_types idt on p.id_doc_type = idt.id
-left join users u on p.user_id = u.user_id
-
-
-
+inner join price_components compType on comp.id_price_conponent = compType.id
 
