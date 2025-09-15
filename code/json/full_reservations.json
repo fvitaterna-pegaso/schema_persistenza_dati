@@ -663,6 +663,78 @@
                             "fare_code": "ECOF",
                             "fare_name": "Economy Flex"
                         }
+                    ],
+                    "price_components": [{
+                            "id_passenger": 4,
+                            "id_reservation": 2,
+                            "id_price_conponent": 2,
+                            "pnr_code": "Y8Z0AR",
+                            "first_name": "Paolo",
+                            "last_name": "Rossi",
+                            "price_component_code": "FUEL",
+                            "price_component_name": "Fuel Surcharge",
+                            "price": 210.0000
+                        }, {
+                            "id_passenger": 4,
+                            "id_reservation": 2,
+                            "id_price_conponent": 9,
+                            "pnr_code": "Y8Z0AR",
+                            "first_name": "Paolo",
+                            "last_name": "Rossi",
+                            "price_component_code": "BASE",
+                            "price_component_name": "Base price for the flight",
+                            "price": 673.0000
+                        }, {
+                            "id_passenger": 4,
+                            "id_reservation": 2,
+                            "id_price_conponent": 10,
+                            "pnr_code": "Y8Z0AR",
+                            "first_name": "Paolo",
+                            "last_name": "Rossi",
+                            "price_component_code": "BAGGAGE",
+                            "price_component_name": "Baggage Security Fee",
+                            "price": 1.1500
+                        }, {
+                            "id_passenger": 4,
+                            "id_reservation": 2,
+                            "id_price_conponent": 12,
+                            "pnr_code": "Y8Z0AR",
+                            "first_name": "Paolo",
+                            "last_name": "Rossi",
+                            "price_component_code": "MUNICIPAL",
+                            "price_component_name": "Municipal Tax",
+                            "price": 15.0000
+                        }, {
+                            "id_passenger": 4,
+                            "id_reservation": 2,
+                            "id_price_conponent": 13,
+                            "pnr_code": "Y8Z0AR",
+                            "first_name": "Paolo",
+                            "last_name": "Rossi",
+                            "price_component_code": "BOARDING",
+                            "price_component_name": "Boarding fee",
+                            "price": 16.4400
+                        }, {
+                            "id_passenger": 4,
+                            "id_reservation": 2,
+                            "id_price_conponent": 14,
+                            "pnr_code": "Y8Z0AR",
+                            "first_name": "Paolo",
+                            "last_name": "Rossi",
+                            "price_component_code": "PASS_SERV",
+                            "price_component_name": "Passengers Service",
+                            "price": 3.0700
+                        }, {
+                            "id_passenger": 4,
+                            "id_reservation": 2,
+                            "id_price_conponent": 15,
+                            "pnr_code": "Y8Z0AR",
+                            "first_name": "Paolo",
+                            "last_name": "Rossi",
+                            "price_component_code": "SECURITY",
+                            "price_component_name": "Security Fee",
+                            "price": 63.5000
+                        }
                     ]
 
                 }
