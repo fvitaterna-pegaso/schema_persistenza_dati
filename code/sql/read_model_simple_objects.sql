@@ -6,7 +6,7 @@ Note
 **********/
 
 
-/**************PREMNOTAZIONI********************/
+/**************PRENOTAZIONI********************/
 
 use db_abdf0e_fvitapegaso
 
