@@ -43,13 +43,12 @@ declare @id_price_component tinyint;
 
 declare @run_entire_script bit;
 
-set @run_entire_script = 0;
+set @run_entire_script = 1;
 
 begin try
 
 	begin transaction
 
-		select @id_reservation_system = id from reservation_systems where reservation_system_code = 'ITA';
 		
 		if @run_entire_script = 1
 		begin
@@ -1594,6 +1593,7 @@ begin try
 		select @id_fare_type = id  from fare_types where fare_code = 'BUSF' and id_airline = 1;
 		select @id_payment_method= id  from payment_methods where cod = 'CC';
 		select @id_reservation_status = id from reservations_statuses where cod = 'BHT';
+		select @id_reservation_system = id from reservation_systems where reservation_system_code = 'ITA';
 		
 		insert into reservations
 		(
@@ -1748,6 +1748,7 @@ begin try
 		select @id_fare_type = id  from fare_types where fare_code = 'BUSF' and id_airline = 1;
 		select @id_payment_method= id  from payment_methods where cod = 'PP';
 		select @id_reservation_status = id from reservations_statuses where cod = 'BHT';
+		select @id_reservation_system = id from reservation_systems where reservation_system_code = 'ITA';
 		
 		insert into reservations
 		(
@@ -1808,7 +1809,7 @@ begin try
 		inner join flights f on fs.id_flight = f.id
 		where f.iata_flight_code = 'AZ614' and fs.departure_date = @departure_date;
 
-		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,2);
 		set @id_journey2 = SCOPE_IDENTITY();
 
 		--BOS->FCO
@@ -1817,7 +1818,7 @@ begin try
 		inner join flights f on fs.id_flight = f.id
 		where f.iata_flight_code = 'AZ615' and fs.departure_date = @return_date;
 
-		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,3);
 		set @id_journey3 = SCOPE_IDENTITY();
 
 		--FCO->PMO
@@ -1826,7 +1827,7 @@ begin try
 		inner join flights f on fs.id_flight = f.id
 		where f.iata_flight_code = 'AZ1777' and fs.departure_date = DATEADD(DAY,1,@return_date);
 
-		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,1);
+		insert into journeys (id_reservation,id_flight_schedule,flight_segment_number) values (@id_reservation,@id_flight_schedule,4);
 		set @id_journey4 = SCOPE_IDENTITY();
 
 		--select * from journeys
