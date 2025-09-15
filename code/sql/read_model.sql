@@ -129,19 +129,60 @@ go
 --left join users u on p.user_id = u.user_id
 
 --Componenti prezzo per passeggero e per prenotazione
---select * from reservation_component_prices
+--QUERY
+--select	comp.id_passenger
+--		, p.id_reservation
+--		, comp.id_price_conponent
+--		, r.pnr_code
+--		, p.first_name
+--		, p.last_name
+--		, compType.price_component_code
+--		, compType.price_component_name
+--		, comp.price
+--from reservation_component_prices comp
+--inner join passengers p on comp.id_passenger = p.id
+--inner join reservations r on p.id_reservation = r.id
+--inner join price_components compType on comp.id_price_conponent = compType.id
 
-select	comp.id_passenger
-		, p.id_reservation
-		, comp.id_price_conponent
-		, r.pnr_code
-		, p.first_name
-		, p.last_name
-		, compType.price_component_code
-		, compType.price_component_name
-		, comp.price
-from reservation_component_prices comp
-inner join passengers p on comp.id_passenger = p.id
-inner join reservations r on p.id_reservation = r.id
-inner join price_components compType on comp.id_price_conponent = compType.id
+--Tratta per passeggero
+--QUERY
+--select	j.id_journey
+--		, j.id_reservation
+--		, r.pnr_code
+--		, p.first_name
+--		, p.last_name
+--		, j.flight_segment_number
+--		, j.id_flight_schedule
+--		, fSched.id_flight
+--		, a.airline_name
+--		, f.iata_flight_code 
+--		, orig.iata_airport_code as origin_iata_flight_code
+--		, cOrig.city_name as origin_city_name
+--		, dest.iata_airport_code as destination_iata_flight_code
+--		, cDest.city_name as destnation_city_name
+--		, pl.model
+--		, fSched.departure_date
+--		, fSched.departure_time
+--		, fSched.arrival_date
+--		, fSched.arrival_time
+--		, airSeats.seat
+--		, fare.fare_code
+--		, fare.fare_name
+--from journeys j
+--inner join reservations r on j.id_reservation = r.id
+--inner join flight_schedules fSched on j.id_flight_schedule = fSched.id
+--inner join airports orig on fSched.id_origin_airport = orig.id
+--inner join cities cOrig on orig.city_id = cOrig.id
+--inner join airports dest on fSched.id_destination_airport = dest.id
+--inner join cities cDest on dest.city_id = cDest.id
+--inner join flights f on fSched.id_flight = f.id
+--inner join airlines a on f.id_airline = a.id
+--inner join airplanes pl on fSched.id_airplane = pl.id
+--left join flight_schedule_seats seats on seats.id_journey = j.id_journey
+--left join airplane_seats airSeats on seats.id_seat = airSeats.id
+--left join passengers p on seats.id_passenger = p.id
+--inner join fare_types fare on seats.id_fare_type = fare.id
+--order by j.id_reservation,j.flight_segment_number
+
+
 

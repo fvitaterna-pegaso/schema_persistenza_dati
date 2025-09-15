@@ -1745,7 +1745,7 @@ begin try
 		
 		select @id_origin_airport = id from airports where iata_airport_code = 'PMO';
 		select @id_destination_airport = id from airports where iata_airport_code = 'BOS';
-		select @id_fare_type = id  from fare_types where fare_code = 'BUSF' and id_airline = 1;
+		select @id_fare_type = id  from fare_types where fare_code = 'ECOF' and id_airline = 1;
 		select @id_payment_method= id  from payment_methods where cod = 'PP';
 		select @id_reservation_status = id from reservations_statuses where cod = 'BHT';
 		select @id_reservation_system = id from reservation_systems where reservation_system_code = 'ITA';
