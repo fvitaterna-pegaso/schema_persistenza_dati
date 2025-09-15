@@ -1,0 +1,27 @@
+{
+    "journeys": [{
+            "id_journey": 1,
+            "id_reservation": 1,
+            "pnr_code": "X7Y9ZQ",
+            "first_name": "Fabio",
+            "last_name": "Vitaterna",
+            "flight_segment_number": 1,
+            "id_flight_schedule": 1,
+            "id_flight": 1,
+            "airline_name": "ITA Airways",
+            "iata_flight_code": "AZ2010",
+            "origin_iata_flight_code": "FCO",
+            "origin_city_name": "Rome",
+            "destination_iata_flight_code": "LIN",
+            "destnation_city_name": "Milan",
+            "model": "AIRBUS A319",
+            "departure_date": "2025-11-24",
+            "departure_time": "07:00:00",
+            "arrival_date": "2025-11-24",
+            "arrival_time": "08:10:00",
+            "seat": "2A",
+            "fare_code": "BUSF",
+            "fare_name": "Business Flex"
+        }
+    ]
+}
