@@ -19,3 +19,4 @@ cross join cteTakenSeats tak;
 
 
 
+
